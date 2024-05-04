@@ -5,12 +5,14 @@ import logo from '../png-transparent-hamburger-button-hot-dog-computer-icons-pan
 import { useData } from '../Pages/DataContext';
 import '../App.css';
 import BoardsMenu from '../Pages/BoardsMenu';
+import { v4 as uuidv4 } from 'uuid'; // Import uuid function
 
 export default function Board() {
   const { boardTitle } = useData();
 
   // Initialize boards with an input value
-  const [boards, setBoards] = useState([{ id: 0, title: boardTitle, inputValue: '', isEditing: true }]);
+  const [boards, setBoards] = useState([{ id: uuidv4(), title: boardTitle, inputValue: '', isEditing: true }]);
+
 
   // Function to handle input change by board ID
   const handleInputChange = (id, event) => {
@@ -25,8 +27,7 @@ export default function Board() {
 
   // Function to add a new board
   const handleDuplicateBoards = () => {
-    const newId = boards.length;
-    const newBoard = { id: newId, title: boardTitle, inputValue: '', isEditing: true }; 
+    const newBoard = { id: uuidv4(), title: boardTitle, inputValue: '', isEditing: true }; 
     setBoards([...boards, newBoard]);
     console.log('id', newBoard.id);
   };
@@ -53,9 +54,16 @@ export default function Board() {
       return board;
     })
     setBoards(newBoards);
-
   }
+
+  //close board
+  const closeBoard = (id) =>{
+    const filterBoards = boards.filter(board => board.id!== id);
+    setBoards(filterBoards);
+  };
+
   console.log('this is my boards:',boards);
+  
   return (
     <div>
       <BoardsMenu></BoardsMenu>
@@ -74,15 +82,15 @@ export default function Board() {
                     value={board.inputValue}
                     onChange={(e) => handleInputChange(board.id, e)}
                     onKeyPress={(e) => handleInputKeyPress(board.id, e)}
-                   
                     autoFocus
                   />
                 </div>
+                
               ) : (
                 <div >
                   <div onClick={()=>handleEditClick(board.id)}>{board.inputValue}</div>
                   {index === boards.length - 1 && <Button variant="primary" onClick={handleDuplicateBoards}>Add list</Button>}
-                  <Button variant="light" style={{ position: 'relative', left: '10px' }}>Close</Button>
+                  <Button onClick={()=>closeBoard(board.id)} variant="light" style={{ position: 'relative', left: '10px' }}>Close</Button>
                 </div>
               )}
             </Card.Body>
