@@ -5,9 +5,12 @@ import logo from '../png-transparent-hamburger-button-hot-dog-computer-icons-pan
 import { useData } from '../Pages/DataContext';
 import '../App.css';
 import BoardsMenu from '../Pages/BoardsMenu';
-import { v4 as uuidv4 } from 'uuid'; // Import uuid function
+import { v4 as uuidv4 } from 'uuid'; 
+import { Reorder } from 'framer-motion';
+
 
 export default function Board() {
+
   const { boardTitle } = useData();
 
   // Initialize boards with an input value
@@ -68,7 +71,9 @@ export default function Board() {
     <div>
       <BoardsMenu></BoardsMenu>
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        <Reorder.Group values={boards} onReorder={setBoards}>
         {boards.map((board, index) => (
+          <Reorder.Item value={board} key={board.id}>
           <Card key={board.id} style={{ width: '18rem', margin: '10px' }}>
             <Card.Header>
               <Card.Img variant="top" src={logo} style={{ height: '30px', width: '30px' }} />
@@ -95,7 +100,9 @@ export default function Board() {
               )}
             </Card.Body>
           </Card>
+          </Reorder.Item>
         ))}
+        </Reorder.Group>
       </div>
     </div>
   );
