@@ -12,7 +12,6 @@ function Menu() {
     const toggleCreateBoard = () =>{
         setCreateBoard(!showCreateBoard)
     };
-   
 
     return (
         <Navbar bg="dark" data-bs-theme="dark">
@@ -30,7 +29,6 @@ function Menu() {
                         <NavDropdown.Item as={Link} to="/Board">Start with a template</NavDropdown.Item>
                         <NavDropdown.Item href="#/action-3">Create Workspace</NavDropdown.Item>
                     </NavDropdown>
-
                 </Nav>
             </Container>
             {showCreateBoard && <CreateBoard show={showCreateBoard} onHide={() => setCreateBoard(false) } />}

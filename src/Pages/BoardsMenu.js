@@ -25,7 +25,7 @@ export default function BoardsMenu() {
                 </Nav>
             </Container>
         </Navbar>
-    );
+    
     </div>
   )
 }

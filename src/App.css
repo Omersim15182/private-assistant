@@ -72,3 +72,15 @@
 .card-title {
     margin: 0;
 }
+
+.background-image-container {
+  background-size: 100% 100%; /* Stretch the background image to cover the entire container */
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1; /* Set a negative z-index to make sure it's behind other elements */
+}
