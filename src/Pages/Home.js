@@ -17,14 +17,23 @@ function Home() {
   return (
     <div className="background-image-container" style={{ backgroundImage: `url(${logo})` }}>
       <>
-        <h3 className='h3-home'>
-          Hello and welcome to my private assistant , i am sure that all of i will find some uses to your daily
-        </h3>
-         <h3 className='h3-home'>To continue registering, click the button and I promise you won't regret it </h3>
-        <Button style={{ position: 'relative', top: '100px', justifyContent:'center' }} variant="primary" onClick={handleShow}>
-          Sign up
-        </Button>
-
+        <div style={{
+          display: 'flex',
+          flexdirection: 'column',
+          position: 'relative',
+          top: '100px'
+        }}>
+          <h3 className='h3-home'>
+            Hello and welcome to my private assistant , i am sure that all of i will find some uses to your daily
+          </h3>
+          <h3 className='h3-home'>To continue registering, click the button and I promise you won't regret it </h3>
+          <Button style={{
+            width: '10%',
+            alignself: 'center'
+          }} variant="light" onClick={handleShow}>
+            Sign up
+          </Button>
+        </div>
         <Offcanvas show={show} onHide={handleClose}>
           <Offcanvas.Header closeButton>
             <Offcanvas.Title>Sign up</Offcanvas.Title>

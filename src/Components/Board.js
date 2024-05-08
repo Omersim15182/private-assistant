@@ -14,12 +14,9 @@ import max from '../maximize.png';
 export default function Board() {
 
   const { boardTitle } = useData();
-
+  
   // Initialize boards with an input value
   const [boards, setBoards] = useState([{ id: uuidv4(), title: boardTitle, inputValue: '', isEditing: true }]);
-
-  
-  
   // Function to handle input change by board ID
   const handleInputChange = (id, event) => {
     const newBoards = boards.map(board => {
@@ -70,7 +67,6 @@ export default function Board() {
     })
     setBoards(newBoards);
   }
-
   //Reduce board
   const closeBoard = (id) => {
     const filterBoards = boards.filter(board => board.id !== id);
@@ -108,15 +104,15 @@ export default function Board() {
                       onKeyPress={(e) => handleInputKeyPress(board.id, e)}
                       autoFocus
                     />
-                     <Cards ></Cards>
+                     <Cards></Cards>
                   </div>
                 ) : (
                   <div >
                     <div onClick={() => handleEditClick(board.id)}>{board.inputValue}</div>
-                    <Button onClick={() => closeBoard(board.id)} variant="light" style={{ position: 'relative', left: '10px' }}>Close</Button>
                   </div>
                 )}
               </Card.Body>
+                <Button onClick={() => closeBoard(board.id)} variant="dark" style={{}}>Close</Button>
             </Card>
             {index === boards.length - 1 && <Button style={{
               position: 'relative',
