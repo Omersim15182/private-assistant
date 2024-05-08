@@ -84,3 +84,14 @@
   left: 0;
   z-index: -1; /* Set a negative z-index to make sure it's behind other elements */
 }
+
+.h3-home{
+  font-family: cursive;
+   margin: auto;
+  width: 50%;
+  border: 3px solid null ;
+  padding: 10px;
+  text-align: center;
+position: relative;
+top: 100px;
+}
