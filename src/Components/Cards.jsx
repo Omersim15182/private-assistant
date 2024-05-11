@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 
 export default function Cards() {
 
-    const [cards, setCard] = useState([{ id: uuidv4(), title: '',show:true }]);
+    const [cards, setCard] = useState([{ id: uuidv4(), title:'',show:true }]);
     
     //Function to handle input changed by card
     const handleInputCard = (event, idCard) => {

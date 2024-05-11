@@ -6,9 +6,9 @@ import Home from '../Pages/Home';
 import Features from '../Pages/Features';
 import Pricing from '../Pages/Pricing';
 import Menu from './Menu';
-import Options from '../Pages/Options';
 import CreateBoard from '../Pages/CreateBoard';
-import Board from './Board';
+import Boards from './Boards';
+import Chat from './Chat';
 
 function Routing() {
     return (
@@ -18,9 +18,10 @@ function Routing() {
                 <Route path="/Home" exact component={Home} />
                 <Route  path="/features" component={Features} />
                 <Route path="/pricing" component={Pricing} />
-                <Route path="/Options" component={Options} />
+                <Route path="/Chat" component={Chat} />
                 <Route path="/CreateBoard" component={CreateBoard} />
-                <Route path="/Board" component={Board} />
+                <Route path="/Boards" component={Boards} />
+                
                 
             </Switch>
         </Router>

@@ -4,7 +4,7 @@ import Offcanvas from 'react-bootstrap/Offcanvas';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import logo from '../marissa-grootes-ck0i9Dnjtj0-unsplash.jpg'
+import logo from '../photos/marissa-grootes-ck0i9Dnjtj0-unsplash.jpg'
 import '../App.css';
 
 
@@ -19,8 +19,8 @@ function Home() {
       <>
         <div style={{
           display: 'flex',
-          flexdirection: 'column',
           position: 'relative',
+          flexDirection: 'column',
           top: '100px'
         }}>
           <h3 className='h3-home'>
@@ -29,7 +29,7 @@ function Home() {
           <h3 className='h3-home'>To continue registering, click the button and I promise you won't regret it </h3>
           <Button style={{
             width: '10%',
-            alignself: 'center'
+            alignSelf: 'center'
           }} variant="light" onClick={handleShow}>
             Sign up
           </Button>

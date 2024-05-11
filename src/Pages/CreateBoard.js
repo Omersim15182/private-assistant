@@ -67,7 +67,7 @@ function CreateBoard({ show, onHide }) {
                 <Button variant="secondary" onClick={onHide}>
                     Close
                 </Button>
-                <Button variant="primary" as={Link} to='/Board' onClick={closeCreateBoard}>
+                <Button variant="primary" as={Link} to='/Boards' onClick={closeCreateBoard}>
                     Create board
                 </Button>
             </Modal.Footer>

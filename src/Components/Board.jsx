@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
-import logo from '../png-transparent-hamburger-button-hot-dog-computer-icons-pancake-hot-dog-share-icon-navbar-menu-thumbnail.png';
+import logo from '../photos/png-transparent-hamburger-button-hot-dog-computer-icons-pancake-hot-dog-share-icon-navbar-menu-thumbnail.png';
 import { useData } from '../Pages/DataContext';
 import '../App.css';
-import BoardsMenu from '../Pages/BoardsMenu';
 import { v4 as uuidv4 } from 'uuid';
 import Cards from './Cards';
-import min from '../minimize.png';
-import max from '../maximize.png';
-
-
+import min from '../photos/minimize.png';
+import max from '../photos/maximize.png';
 export default function Board() {
 
   const { boardTitle } = useData();
+
   
   // Initialize boards with an input value
   const [boards, setBoards] = useState([{ id: uuidv4(), title: boardTitle, inputValue: '', isEditing: true }]);
+
+
+
   // Function to handle input change by board ID
   const handleInputChange = (id, event) => {
     const newBoards = boards.map(board => {
@@ -27,14 +28,12 @@ export default function Board() {
     });
     setBoards(newBoards);
   };
-
   // Function to add a new board
   const handleDuplicateBoards = () => {
-    const newBoard = { id: uuidv4(), title: boardTitle, inputValue: '', isEditing: true };
+    const newBoard = { id: uuidv4(), title: '', inputValue: '', isEditing: true };
     setBoards([...boards, newBoard]);
     console.log('id board', newBoard.id);
   };
-
   // Function to handle Enter key press on input
   const handleInputKeyPress = (id, event) => {
     if (event.key === 'Enter') {
@@ -56,7 +55,6 @@ export default function Board() {
     setBoards(newBoards);
    }
   }
-
   // Function to handle clicking on the title to edit
   const handleEditClick = (id) => {
     const newBoards = boards.map(board => {
@@ -67,19 +65,16 @@ export default function Board() {
     })
     setBoards(newBoards);
   }
+
   //Reduce board
   const closeBoard = (id) => {
     const filterBoards = boards.filter(board => board.id !== id);
     setBoards(filterBoards);
   };
-
   console.log('this is my boards:', boards);
-
   return (
     <div>
-      <BoardsMenu></BoardsMenu>
       <div style={{ display: 'flex', flexWrap: 'wrap', flexDirection: 'row' }}>
-
         {boards.map((board, index) => (
           <div key={board.id}>
             <Card key={board.id} style={{ width: '18rem', margin: '10px' }}>
@@ -104,11 +99,12 @@ export default function Board() {
                       onKeyPress={(e) => handleInputKeyPress(board.id, e)}
                       autoFocus
                     />
-                     <Cards></Cards>
+                     <Cards ></Cards>
                   </div>
                 ) : (
                   <div >
                     <div onClick={() => handleEditClick(board.id)}>{board.inputValue}</div>
+                    <Button onClick={() => closeBoard(board.id)} variant="light" style={{ position: 'relative', left: '10px' }}>Close</Button>
                   </div>
                 )}
               </Card.Body>
@@ -121,7 +117,6 @@ export default function Board() {
             }} variant="primary" onClick={handleDuplicateBoards}>Add list</Button>}
           </div>
         ))}
-
       </div>
     </div>
   );
