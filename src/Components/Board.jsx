@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Cards from './Cards';
 import min from '../photos/minimize.png';
 import max from '../photos/maximize.png';
+
 export default function Board() {
 
   const { boardTitle } = useData();

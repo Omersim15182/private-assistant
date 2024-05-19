@@ -8,7 +8,7 @@ import Pricing from '../Pages/Pricing';
 import Menu from './Menu';
 import CreateBoard from '../Pages/CreateBoard';
 import Boards from './Boards';
-import Chat from './Chat';
+import Chat from '../chat/Chat';
 
 function Routing() {
     return (

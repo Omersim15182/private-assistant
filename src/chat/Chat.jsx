@@ -1,7 +1,6 @@
 import React from 'react'
 import Members from './Members'
 import Message from './Message'
-import { Card } from 'react-bootstrap'
 
 export default function Chat() {
   return (
