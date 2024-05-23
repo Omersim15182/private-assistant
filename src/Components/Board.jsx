@@ -72,6 +72,8 @@ export default function Board() {
     const filterBoards = boards.filter(board => board.id !== id);
     setBoards(filterBoards);
   };
+
+  
   console.log('this is my boards:', boards);
   return (
     <div>

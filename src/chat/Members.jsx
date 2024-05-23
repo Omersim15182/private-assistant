@@ -8,6 +8,9 @@ export default function Members() {
   const [users, setUsers] = useState([{ id: uuidv4(), name: 'John', message: 'Hello!', picture: pic },
   { id: uuidv4(), name: 'Alice', message: 'Hi there!', picture: pic },
   { id: uuidv4(), name: 'Alice', message: 'Hi there!', picture: pic }])
+
+  
+ 
   return (
     <div className='members'> 
 

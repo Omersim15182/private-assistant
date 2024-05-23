@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import Button from 'react-bootstrap/Button';
 
+
 export default function Cards() {
 
     const [cards, setCard] = useState([{ id: uuidv4(), title:'',show:true }]);
-    
     //Function to handle input changed by card
     const handleInputCard = (event, idCard) => {
         const newCard = cards.map(card => {
@@ -38,6 +38,7 @@ export default function Cards() {
     console.log('card:',cards);
     return (
         <div>
+           
             {cards.map((card, index) => (
                 <div key={card.id}>
                     <input
@@ -47,7 +48,7 @@ export default function Cards() {
                         onChange={(event) => handleInputCard(event, card.id)}
                         onKeyPress={(e) => onPress(e,card.id)}
                         placeholder='Enter a card please'
-                        />
+                        /> 
                 </div>
             ))}
            <Button variant='light' onClick={handleDuplicateCard}>Add card </Button>
