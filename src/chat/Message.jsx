@@ -6,16 +6,25 @@ import Button from 'react-bootstrap/Button';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
-export default function Message() {
-  const [users, setUsers] = useState([{ id: uuidv4(), name: 'omer', messages: [{ message: '', date: '' }] }]);
+export default function Message({ selectedMember }) {
+  const [users, setUsers] = useState([{  messages: [{name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
 
   //Function for send new message 
   const sentMessage = () => {
-    const updatedUsers = users.map(user => {
-      const updatedMessages = [...user.messages, { message: newMessageText, date: new Date() }];
-      return { ...user, messages: updatedMessages };
-    });
+    const updatedUsers = users.map(user => ({
+      
+      messages: [
+        ...user.messages,
+        {
+          id: selectedMember.id,
+          name: selectedMember.name,
+          message: newMessageText,
+          date: new Date(),
+
+        },
+      ],
+    }));
     setUsers(updatedUsers);
     setNewMessageText('');
   };
@@ -30,38 +39,40 @@ export default function Message() {
     e.preventDefault();
 
     const lastUser = users[users.length - 1];
-
     const updatedUser = {
-      id: lastUser.id,
-      name: lastUser.name,
+
       messages: [
         {
+          name: lastUser.messages[lastUser.messages.length - 1].name,
           message: lastUser.messages[lastUser.messages.length - 1].message,
           date: lastUser.messages[lastUser.messages.length - 1].date,
+          id: lastUser.messages[lastUser.messages.length - 1].id,
+
         },
       ],
-    };
-    console.log('updatedUser:',updatedUser.id);
+    };  console.log('lastUser',lastUser);
+
     {
       axios.post(`http://localhost:3500/createMessage`, updatedUser)
-     
+
         .then(response => console.log(response))
         .catch(err => console.log(err))
     }
   }
 
 
-  console.log(users);
+  console.log('users:', users);
+  console.log('selectedMember:', selectedMember);
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <Card style={{ height: '29rem', width: '35rem' }}>
           <Card.Body>
             <Card.Title>Messages</Card.Title>
-            {users.map(user => (
-              <div key={user.id}>
-                {user.messages.map((message, index) => (
-                  <p key={index}>{message.message}</p>
+            {users.map((user, userIndex) => (
+              <div key={userIndex}>
+                {user.messages.map((message, messageIndex) => (
+                  <p key={messageIndex}>{message.message}</p>
                 ))}
                 <div className='friend-chat'>
                   <p>Hey! I'm fine. Thanks for asking!</p>
@@ -70,8 +81,7 @@ export default function Message() {
             ))}
           </Card.Body>
           <div className='send-button'>
-            <Button variant="success" type="submit"
-              onClick={sentMessage}>
+            <Button variant="success" type="submit" onClick={sentMessage}>
               Send
             </Button>
           </div>

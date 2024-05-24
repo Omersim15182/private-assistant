@@ -12,12 +12,10 @@ app.use(express.json());
 app.post('/createMessage',async(req,res) => {
   try {
     console.log(req.body);
-    const {id , name, messages} = req.body;
-    const message = messages[0].message;
-    const date = new Date(messages[0].date).toISOString();
-    
-    await db.query('INSERT INTO users (id, name) VALUES ($1, $2)', [id, name]);
-    await db.query('INSERT INTO messages (user_id, message, date) VALUES ($1, $2, $3)', [id, message, date]);
+    const { messages} = req.body;
+    const message = messages[0];
+    console.log(message);
+    await db.query('INSERT INTO messages (user_id, name,message, date) VALUES ($1, $2, $3,$4)', [message.id,message.name, message.message, message.date]);
 
 
     res.status(200).json({message:'Message created seccessfully'});
