@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from 'react-bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 
 export default function Message({ selectedMember }) {
@@ -21,7 +20,6 @@ export default function Message({ selectedMember }) {
           name: selectedMember.name,
           message: newMessageText,
           date: new Date(),
-
         },
       ],
     }));
@@ -59,7 +57,22 @@ export default function Message({ selectedMember }) {
         .catch(err => console.log(err))
     }
   }
+  // Function to fetch messages for the selected member
+  const fetchMessages = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3500/messages/${selectedMember.id}`);
+      console.log('response',response.data);
+    } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
 
+  // Fetch messages when selectedMember changes
+  useEffect(() => {
+    if (selectedMember && selectedMember.id) {
+      fetchMessages();
+    }
+  }, [selectedMember]);
 
   console.log('users:', users);
   console.log('selectedMember:', selectedMember);

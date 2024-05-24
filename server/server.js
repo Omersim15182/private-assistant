@@ -25,6 +25,18 @@ app.post('/createMessage',async(req,res) => {
   }
 })
 
+app.get('/messages/:userId',async (req,res)=>{
+  try{
+    const userId = req.params.userId;
+    console.log('userId',userId);
+    const data = await db.query('SELECT * FROM messages WHERE user_id = $1', [userId]);
+    res.json(data.rows);
+  } catch (err){
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+})
+
 // Define a route
 app.get('/', (req, res) => {
   res.send('Hello, World!');
