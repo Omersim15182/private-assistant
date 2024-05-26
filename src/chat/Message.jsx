@@ -8,7 +8,7 @@ import axios from 'axios';
 export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([{  messages: [{name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
-
+  const [contactMessages,setContactMessages]=useState([]);
   //Function for send new message 
   const sentMessage = () => {
     const updatedUsers = users.map(user => ({
@@ -24,12 +24,16 @@ export default function Message({ selectedMember }) {
       ],
     }));
     setUsers(updatedUsers);
+    setContactMessages([...contactMessages, { message: newMessageText }]);
     setNewMessageText('');
+    
+
   };
 
   //Function for save the message 
   const handleChange = event => {
     setNewMessageText(event.target.value);
+    
   };
 
   //post request using axios
@@ -52,7 +56,6 @@ export default function Message({ selectedMember }) {
 
     {
       axios.post(`http://localhost:3500/createMessage`, updatedUser)
-
         .then(response => console.log(response))
         .catch(err => console.log(err))
     }
@@ -62,6 +65,8 @@ export default function Message({ selectedMember }) {
     try {
       const response = await axios.get(`http://localhost:3500/messages/${selectedMember.id}`);
       console.log('response',response.data);
+      setContactMessages(response.data);
+
     } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -73,7 +78,7 @@ export default function Message({ selectedMember }) {
       fetchMessages();
     }
   }, [selectedMember]);
-
+  console.log('contact:',contactMessages);
   console.log('users:', users);
   console.log('selectedMember:', selectedMember);
   return (
@@ -82,16 +87,12 @@ export default function Message({ selectedMember }) {
         <Card style={{ height: '29rem', width: '35rem' }}>
           <Card.Body>
             <Card.Title>Messages</Card.Title>
-            {users.map((user, userIndex) => (
-              <div key={userIndex}>
-                {user.messages.map((message, messageIndex) => (
-                  <p key={messageIndex}>{message.message}</p>
-                ))}
+                 {contactMessages.map((contact,index)=>(
+                    <p key={index}>{contact.message}</p>
+                  ))}
                 <div className='friend-chat'>
                   <p>Hey! I'm fine. Thanks for asking!</p>
-                </div>
               </div>
-            ))}
           </Card.Body>
           <div className='send-button'>
             <Button variant="success" type="submit" onClick={sentMessage}>

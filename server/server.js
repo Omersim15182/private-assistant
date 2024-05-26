@@ -16,9 +16,8 @@ app.post('/createMessage',async(req,res) => {
     const message = messages[0];
     console.log(message);
     await db.query('INSERT INTO messages (user_id, name,message, date) VALUES ($1, $2, $3,$4)', [message.id,message.name, message.message, message.date]);
-
-
     res.status(200).json({message:'Message created seccessfully'});
+    
   } catch(error) {
     console.error('Error creating message:',error);
     res.status(500).json({ error: 'An internal server error occurred' });
