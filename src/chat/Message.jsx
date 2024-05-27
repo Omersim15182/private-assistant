@@ -9,10 +9,10 @@ export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([{  messages: [{name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
   const [contactMessages,setContactMessages]=useState([]);
+
   //Function for send new message 
   const sentMessage = () => {
     const updatedUsers = users.map(user => ({
-      
       messages: [
         ...user.messages,
         {
@@ -33,7 +33,6 @@ export default function Message({ selectedMember }) {
   //Function for save the message 
   const handleChange = event => {
     setNewMessageText(event.target.value);
-    
   };
 
   //post request using axios
@@ -60,36 +59,36 @@ export default function Message({ selectedMember }) {
         .catch(err => console.log(err))
     }
   }
-  // Function to fetch messages for the selected member
-  const fetchMessages = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3500/messages/${selectedMember.id}`);
-      console.log('response',response.data);
-      setContactMessages(response.data);
 
-    } catch (error) {
-      console.error('Error fetching messages:', error);
+  const fetchMessages = async () =>{
+    try  {
+      const response = await axios.get(`http://localhost:3500/messages/${selectedMember.id}`);
+      setContactMessages(response.data);
+      console.log('res',response.data);
+    } catch(error){
+      console.error('Error fetching message: ',error);
     }
   };
-
-  // Fetch messages when selectedMember changes
-  useEffect(() => {
-    if (selectedMember && selectedMember.id) {
+  useEffect(()=>{
+    if(selectedMember&&selectedMember.id){
       fetchMessages();
     }
-  }, [selectedMember]);
-  console.log('contact:',contactMessages);
-  console.log('users:', users);
-  console.log('selectedMember:', selectedMember);
+  },[selectedMember]);
+
+  // console.log('selected Member test',selectedMember);
+  // console.log('contact:',contactMessages);
+  // console.log('users:', users);
+  // console.log('selectedMember:', selectedMember);
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
         <Card style={{ height: '29rem', width: '35rem' }}>
           <Card.Body>
             <Card.Title>Messages</Card.Title>
-                 {contactMessages.map((contact,index)=>(
-                    <p key={index}>{contact.message}</p>
-                  ))}
+                {contactMessages.map((contact,index)=>(
+                 <p key={index}>{contact.message}</p>
+                ))}
                 <div className='friend-chat'>
                   <p>Hey! I'm fine. Thanks for asking!</p>
               </div>
