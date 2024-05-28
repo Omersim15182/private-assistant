@@ -22,7 +22,7 @@ app.post('/createMessage',async(req,res)=>{
     const {messages} = req.body;
     const message = messages[0];
     console.log(message);
-    await db.query('INSERT INTO messages (user_id, name,message, date) VALUES ($1, $2, $3,$4)', [message.id,message.name, message.message, message.date]);
+    await db.query('INSERT INTO messages (id, name,message, date) VALUES ($1, $2, $3,$4)', [message.id,message.name, message.message, message.date]);
     res.status(200).json({message:'Message created seccessfully'});
   }  catch(error){
     console.error('Error creating message:',error);
@@ -35,8 +35,7 @@ app.post('/createMessage',async(req,res)=>{
 app.get('/messages/:userId',async(req,res)=>{
   try{
     const userId = req.params.userId;
-    console.log(userId);
-    const data = await db.query('SELECT * FROM messages WHERE user_id = $1', [userId]);
+    const data = await db.query('SELECT * FROM messages WHERE id = $1', [userId]);
     res.json(data.rows);
   } catch(error) {
     console.error('Error in fetch messages oreder the key: ',error)
@@ -44,15 +43,15 @@ app.get('/messages/:userId',async(req,res)=>{
 })
 
 //Get request to retrieve contacts from db
-// app.get('/retrieveContact',async(req,res)=>{
-//   try  {
-//   const data = await db.query('SELECT DISTINCT user_id, name FROM messages')
-//   res.json(data.rows);
-//   } catch (error){
-//     console.error('Error fetching contacts:', error);
-//     res.status(500).json({ error: 'An internal server error occurred' });
-//   }
-// }) 
+app.get('/retrieveContact',async(req,res)=>{
+  try  {
+  const data = await db.query('SELECT DISTINCT id, name FROM messages')
+  res.json(data.rows);
+  } catch (error){
+    console.error('Error fetching contacts:', error);
+    res.status(500).json({ error: 'An internal server error occurred' });
+  }
+}) 
 
 // Define a route
 app.get('/', (req, res) => {

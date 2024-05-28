@@ -37,20 +37,20 @@ export default function Members({ onSelectMember }) {
   }
 
   //Get request to retrieve contacts from db
-//   const fetchContact =  async() =>{
-//     try {
-//     const response = await axios.get('http://localhost:3500/retrieveContact');
-//     const contact = response.data;
-//     setUserDb(...userDb,contact); 
-//     setUsers(response.data.map(contact =>({...contact,picture:pic})));
-//   } catch (erorr) {
-//     console.error('Error to fetch contact: ',erorr);
-//   }
-//   };
-// useEffect(()=>{
-//   fetchContact()
-// },[])
+  const fetchContact =  async() =>{
+    try {
+    const response = await axios.get('http://localhost:3500/retrieveContact');
+    const contact = response.data;
+    setUserDb(...userDb,contact); 
+    setUsers(response.data.map(contact =>({...contact,picture:pic})));
+  } catch (erorr) {
+    console.error('Error to fetch contact: ',erorr);
+  }
+  };
 
+  useEffect(() => {
+    fetchContact();
+  }, []);
 console.log('my users',users);
   
   return (

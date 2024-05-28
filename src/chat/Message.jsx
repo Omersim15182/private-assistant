@@ -9,7 +9,7 @@ export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([{  messages: [{name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
   const [contactMessages,setContactMessages]=useState([]);
-
+console.log('sel',selectedMember.id);
   //Function for send new message 
   const sentMessage = () => {
     const updatedUsers = users.map(user => ({
@@ -74,6 +74,8 @@ export default function Message({ selectedMember }) {
       fetchMessages();
     }
   },[selectedMember]);
+
+  
 
   // console.log('selected Member test',selectedMember);
   // console.log('contact:',contactMessages);
