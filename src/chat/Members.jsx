@@ -26,7 +26,7 @@ export default function Members({ onSelectMember }) {
       return;
     }
     try {
-      const response = await axios.get('http://localhost:3500/createContactId');
+      const response = await axios.get('http://localhost:3500/messages/createContactId');
       const newUser = {id:response.data.id,name:inputName,picture:pic};
       setUsers([...users,newUser]);
       setInputName('');
@@ -39,7 +39,7 @@ export default function Members({ onSelectMember }) {
   //Get request to retrieve contacts from db
   const fetchContact =  async() =>{
     try {
-    const response = await axios.get('http://localhost:3500/retrieveContact');
+    const response = await axios.get('http://localhost:3500/messages/retrieveContact');
     const contact = response.data;
     setUserDb(...userDb,contact); 
     setUsers(response.data.map(contact =>({...contact,picture:pic})));
