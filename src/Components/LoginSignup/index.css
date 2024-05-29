@@ -5,4 +5,12 @@ body {
   
 .login{
     border-style: dotted;
+    display: flex;
+    justify-content: center;
+    
+}
+
+.login-board{
+    width:100vh;
+    height: 80vh;
 }

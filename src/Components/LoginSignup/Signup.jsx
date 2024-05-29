@@ -19,10 +19,14 @@ export default function Signup() {
       }
     const clickSignup = (e) =>{
         e.preventDefault();
-     setUser([...user,{Email:email,Name:name,Password:password}])
-     setEmail('');
-     setName('');
-     setPassword('')
+    if (email === '' ||  name === '' || password === '') {
+        alert('Enter again')
+    } else {
+        setUser([...user,{Email:email,Name:name,Password:password}])
+        setEmail('');
+        setName('');
+        setPassword('')
+    }
     }
     
     console.log('user sign up',user);
