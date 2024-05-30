@@ -7,7 +7,7 @@ import Features from '../Pages/Features';
 import Pricing from '../Pages/Pricing';
 import Menu from './Menu';
 import CreateBoard from '../Pages/CreateBoard';
-import Boards from './Boards';
+import Board from './Board';
 import Chat from '../chat/Chat';
 
 function Routing() {
@@ -20,7 +20,7 @@ function Routing() {
                 <Route path="/pricing" component={Pricing} />
                 <Route path="/Chat" component={Chat} />
                 <Route path="/CreateBoard" component={CreateBoard} />
-                <Route path="/Boards" component={Boards} />
+                <Route path="/Boards" component={Board} />
                 
                 
             </Switch>

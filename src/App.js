@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Routing from './Components/Routing';
 import { DataProvider } from './Pages/DataContext';
 
-
+require('dotenv').config();
 
 function App() {
     return (

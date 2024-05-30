@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./dbConfig'); 
 const { v4: uuidv4 } = require('uuid'); 
-
+require('dotenv').config();
+const crypto = require('crypto');
 
 // Create an instance of Express
 const app = express();
@@ -23,3 +24,5 @@ const port = 3500;
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
+
+

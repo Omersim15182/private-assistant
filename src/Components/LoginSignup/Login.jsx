@@ -4,10 +4,8 @@ import Button from 'react-bootstrap/Button';
 
 
 export default function Login() {
-    const [user, setUser] = useState([]);
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const [text, setText] = useState('');
 
     const handleName = (e) => {
         setName(e.target.value);
@@ -15,17 +13,7 @@ export default function Login() {
     const handlePassword = (e) => {
         setPassword(e.target.value);
     }
-    const clickLogin = (e) => {
-        e.preventDefault();
-        if (user === '' || password === '') {
-            alert('Enter again')
-        }
-        else {
-            setUser([...user, { name: name, password: password }])
-            setName('');
-            setPassword('')
-        }
-    }
+   
 
     //Post request
     const handleSubmit = async (e) => {
@@ -46,7 +34,6 @@ export default function Login() {
     }
     console.log(name);
     console.log(password);
-    console.log(user);
     return (
         <div>
             <h1>Login</h1>

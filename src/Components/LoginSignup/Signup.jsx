@@ -6,7 +6,6 @@ export default function Signup() {
     const [email,setEmail] = useState('');
     const [name,setName] = useState('');
     const [password,setPassword] = useState('');
-    const [text, setText] = useState('');
 
     const handleEmail = (e) =>{
         setEmail(e.target.value)
