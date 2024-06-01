@@ -2,12 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const db = require('./dbConfig'); 
 const { v4: uuidv4 } = require('uuid'); 
+const cookieParser = require('cookie-parser');  
 require('dotenv').config();
-const crypto = require('crypto');
 
 // Create an instance of Express
 const app = express();
 
+app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 
