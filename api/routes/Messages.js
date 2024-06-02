@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const checkAuth = require('../middlewares/checkAuth');
 
+router.use(checkAuth);
 //Get request to create key for each new contact
 router.get('/createContactId',(req, res) => {
     const newId = { id: uuidv4() };
@@ -14,7 +15,7 @@ router.get('/createContactId',(req, res) => {
   //Post request to create a new message
 router.post('/createMessage',async(req,res)=>{
     try{
-      console.log(req.body);
+      
       const {messages} = req.body;
       const message = messages[0];
       console.log(message);
