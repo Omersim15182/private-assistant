@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../server/dbConfig');
+const pool = require('../../server/dbConfig');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 
+const checkAuth = require('../middlewares/checkAuth');
 dotenv.config();
-process.env.TOKEN_SECRET;
+
+
 
 // Function to generate JWT access token
 function generateAccessToken(username) {

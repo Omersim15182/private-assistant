@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const cookieParser = require('cookie-parser');  
 require('dotenv').config();
 
+
 // Create an instance of Express
 const app = express();
 
@@ -12,13 +13,12 @@ app.use(cookieParser());
 app.use(cors());
 app.use(express.json());
 
-//Routes
-const messgeRouter = require("../routes/Messages");
-const homeRouter = require("../routes/LoginSignup");
+// Routes
+const chatRouter = require("../api/routes/Messages");
+const homeRouter = require("../api/routes/LoginSignup");
 
-app.use("/messages", messgeRouter);
+app.use("/chat", chatRouter);
 app.use("/home", homeRouter);
-
 
 // Start the server
 const port = 3500;

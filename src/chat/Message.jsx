@@ -54,7 +54,7 @@ console.log('sel',selectedMember.id);
     };  console.log('lastUser',lastUser);
 
     {
-      axios.post(`http://localhost:3500/messages/createMessage`, updatedUser)
+      axios.post(`http://localhost:3500/chat/createMessage`, updatedUser)
         .then(response => console.log(response))
         .catch(err => console.log(err))
     }
@@ -62,7 +62,7 @@ console.log('sel',selectedMember.id);
 
   const fetchMessages = async () =>{
     try  {
-      const response = await axios.get(`http://localhost:3500/messages/messages/${selectedMember.id}`);
+      const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`);
       setContactMessages(response.data);
       console.log('res',response.data);
     } catch(error){
@@ -79,7 +79,7 @@ console.log('sel',selectedMember.id);
 
   // console.log('selected Member test',selectedMember);
   // console.log('contact:',contactMessages);
-  // console.log('users:', users);
+  console.log('users:', users);
   // console.log('selectedMember:', selectedMember);
 
   return (
