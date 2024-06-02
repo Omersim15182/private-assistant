@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 
-const checkAuth = require('../middlewares/checkAuth');
 dotenv.config();
 
 

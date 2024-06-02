@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import pic from '../photos/istockphoto-1437816897-1024x1024.jpg'
+import pic from '/Users/nofar simchi/Desktop/Omer Projects/React project/private-assistant/src/photos/istockphoto-1437816897-1024x1024.jpg'
 import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './chat.css'

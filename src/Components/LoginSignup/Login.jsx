@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
-
+import { useHistory } from 'react-router-dom';
 
 export default function Login() {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+    const history = useHistory();
 
     const handleName = (e) => {
         setName(e.target.value);
@@ -28,6 +29,9 @@ export default function Login() {
             console.log('Login successful. Token:', token);
             setName('');
             setPassword('');
+            history.push('../chat/Chat');
+
+
         } catch (error) {
             console.error('Failed to login. Please try again:', error.response);
         }

@@ -8,21 +8,22 @@ import Pricing from '../Pages/Pricing';
 import Menu from './Menu';
 import CreateBoard from '../Pages/CreateBoard';
 import Board from './Board';
-import Chat from '../chat/Chat';
+import Chat from './chat/Chat';
 
 function Routing() {
     return (
         <Router>
-            <Menu /> 
+            <Menu />
             <Switch>
+                <Route exact path="/" component={Home} />
                 <Route path="/Home" exact component={Home} />
-                <Route  path="/features" component={Features} />
+                <Route path="/features" component={Features} />
                 <Route path="/pricing" component={Pricing} />
                 <Route path="/Chat" component={Chat} />
                 <Route path="/CreateBoard" component={CreateBoard} />
                 <Route path="/Boards" component={Board} />
-                
-                
+
+
             </Switch>
         </Router>
     );
