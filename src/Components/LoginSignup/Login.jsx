@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import { useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export default function Login() {
     const [name, setName] = useState('');
@@ -27,6 +28,7 @@ export default function Login() {
             });
             const token = response.data.token;
             console.log('Login successful. Token:', token);
+            Cookies.set('token',token,{expires: 365, path: '/'})
             setName('');
             setPassword('');
             history.push('../chat/Chat');
@@ -34,6 +36,7 @@ export default function Login() {
 
         } catch (error) {
             console.error('Failed to login. Please try again:', error.response);
+           
         }
     }
     console.log(name);

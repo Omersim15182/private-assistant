@@ -54,15 +54,16 @@ console.log('sel',selectedMember.id);
     };  console.log('lastUser',lastUser);
 
     {
-      axios.post(`http://localhost:3500/chat/createMessage`, updatedUser)
+      axios.post(`http://localhost:3500/chat/createMessage`, updatedUser,{withCredentials:true})
         .then(response => console.log(response))
         .catch(err => console.log(err))
     }
   }
 
   const fetchMessages = async () =>{
+    
     try  {
-      const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`);
+      const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`,{withCredentials:true});
       setContactMessages(response.data);
       console.log('res',response.data);
     } catch(error){
