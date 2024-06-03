@@ -28,7 +28,7 @@ export default function Login() {
             });
             const token = response.data.token;
             console.log('Login successful. Token:', token);
-            Cookies.set('token',token,{expires: 365, path: '/'})
+            Cookies.set('token',token,{expires: 2 / (24 * 60), path: '/'})
             setName('');
             setPassword('');
             history.push('../chat/Chat');
