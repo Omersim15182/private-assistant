@@ -6,10 +6,10 @@ import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 
 export default function Message({ selectedMember }) {
-  const [users, setUsers] = useState([{  messages: [{name: '', message: '', date: '', id: '' }] }]);
+  const [users, setUsers] = useState([{ messages: [{ name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
-  const [contactMessages,setContactMessages]=useState([]);
-console.log('sel',selectedMember.id);
+  const [contactMessages, setContactMessages] = useState([]);
+  console.log('sel', selectedMember.id);
   //Function for send new message 
   const sentMessage = () => {
     const updatedUsers = users.map(user => ({
@@ -26,7 +26,7 @@ console.log('sel',selectedMember.id);
     setUsers(updatedUsers);
     setContactMessages([...contactMessages, { message: newMessageText }]);
     setNewMessageText('');
-    
+
 
   };
 
@@ -51,32 +51,38 @@ console.log('sel',selectedMember.id);
 
         },
       ],
-    };  console.log('lastUser',lastUser);
+    }; console.log('lastUser', lastUser);
 
     {
-      axios.post(`http://localhost:3500/chat/createMessage`, updatedUser,{withCredentials:true})
+      axios.post(`http://localhost:3500/chat/createMessage`, updatedUser,
+        {
+          withCredentials: true
+        })
         .then(response => console.log(response))
         .catch(err => console.log(err))
     }
   }
 
-  const fetchMessages = async () =>{
-    
-    try  {
-      const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`,{withCredentials:true});
+  const fetchMessages = async () => {
+
+    try {
+      const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`,
+        {
+          withCredentials: true
+        });
       setContactMessages(response.data);
-      console.log('res',response.data);
-    } catch(error){
-      console.error('Error fetching message: ',error);
+      console.log('res', response.data);
+    } catch (error) {
+      console.error('Error fetching message: ', error);
     }
   };
-  useEffect(()=>{
-    if(selectedMember&&selectedMember.id){
+  useEffect(() => {
+    if (selectedMember && selectedMember.id) {
       fetchMessages();
     }
-  },[selectedMember]);
+  }, [selectedMember]);
 
-  
+
 
   // console.log('selected Member test',selectedMember);
   // console.log('contact:',contactMessages);
@@ -89,12 +95,12 @@ console.log('sel',selectedMember.id);
         <Card style={{ height: '29rem', width: '35rem' }}>
           <Card.Body>
             <Card.Title>Messages</Card.Title>
-                {contactMessages.map((contact,index)=>(
-                 <p key={index}>{contact.message}</p>
-                ))}
-                <div className='friend-chat'>
-                  <p>Hey! I'm fine. Thanks for asking!</p>
-              </div>
+            {contactMessages.map((contact, index) => (
+              <p key={index}>{contact.message}</p>
+            ))}
+            <div className='friend-chat'>
+              <p>Hey! I'm fine. Thanks for asking!</p>
+            </div>
           </Card.Body>
           <div className='send-button'>
             <Button variant="success" type="submit" onClick={sentMessage}>

@@ -16,8 +16,8 @@ app.use(cors({
 }));app.use(express.json());
 
 // Routes
-const chatRouter = require("../api/routes/Messages");
-const homeRouter = require("../api/routes/LoginSignup");
+const chatRouter = require("./routes/Messages");
+const homeRouter = require("./routes/LoginSignup");
 
 app.use("/chat", chatRouter);
 app.use("/home", homeRouter);

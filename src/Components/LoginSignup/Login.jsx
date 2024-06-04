@@ -20,7 +20,7 @@ export default function Login() {
     //Post request
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('test');
+
         try {
             const response = await axios.post('http://localhost:3500/home/login', {
                 name: name,
@@ -36,11 +36,13 @@ export default function Login() {
 
         } catch (error) {
             console.error('Failed to login. Please try again:', error.response);
+            setName('');
+            setPassword('');
+            alert('Your details is incorrect')
            
         }
     }
-    console.log(name);
-    console.log(password);
+    
     return (
         <div>
             <h1>Login</h1>
