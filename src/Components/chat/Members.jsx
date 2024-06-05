@@ -11,6 +11,7 @@ export default function Members({ onSelectMember }) {
   const [inputName, setInputName] = useState('');
   const [userDb, setUserDb] = useState([]);
 
+
   const handleSelectMember = (user) => {
     onSelectMember(user);
   }
@@ -52,6 +53,7 @@ export default function Members({ onSelectMember }) {
       setUsers(response.data.map(contact => ({ ...contact, picture: pic })));
     } catch (erorr) {
       console.error('Error to fetch contact: ', erorr);
+      
     }
   };
 

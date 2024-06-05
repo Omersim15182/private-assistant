@@ -25,7 +25,11 @@ router.post('/login', async (req, res) => {
         }
         const token = jwt.sign({ name: user.name, password: user.password }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
         res.cookie('token', token, {
-            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', 
+            sameSite: 'Strict',
+            path:'/',
+            maxAge: 3600000 ,
+            httpOnly:true,
         });
         res.status(200).json({ token });
     } catch (error) {

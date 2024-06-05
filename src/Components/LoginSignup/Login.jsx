@@ -15,7 +15,7 @@ export default function Login() {
     const handlePassword = (e) => {
         setPassword(e.target.value);
     }
-   
+
 
     //Post request
     const handleSubmit = async (e) => {
@@ -24,12 +24,14 @@ export default function Login() {
         try {
             const response = await axios.post('http://localhost:3500/home/login', {
                 name: name,
-                password: password
-            });
+                password: password,
+                
+            },
+            {withCredentials:true}
+        );
             const token = response.data.token;
             console.log('Login successful. Token:', token);
-            Cookies.set('token',token,{expires: 2 / (24 * 60), path: '/'})
-            setName('');
+            Cookies.set('token', token, { expires: 1 / 24, path: '/',secure: true  })
             setPassword('');
             history.push('../chat/Chat');
 
@@ -39,10 +41,10 @@ export default function Login() {
             setName('');
             setPassword('');
             alert('Your details is incorrect')
-           
+
         }
     }
-    
+
     return (
         <div>
             <h1>Login</h1>
