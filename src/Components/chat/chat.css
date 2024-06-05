@@ -13,7 +13,7 @@ body {
   .chat{
     display: flex;
     align-items: center;
-    width: 17rem;
+    width: 16rem;
   
   }
   .chat-details{
@@ -40,3 +40,32 @@ body {
     display: flex;
     flex-direction: row-reverse;
   }
+
+  /* Define a custom scrollbar */
+.custom-scrollbar {
+  
+  scrollbar-width: thin; 
+ 
+  scrollbar-color: #888 #f1f1f1;
+
+  
+  &::-webkit-scrollbar {
+      width: 10px;
+  }
+  
+  
+  &::-webkit-scrollbar-track {
+      background: #f1f1f1; 
+  }
+  
+  
+  &::-webkit-scrollbar-thumb {
+      background: #888; 
+  }
+  
+  
+  &::-webkit-scrollbar-thumb:hover {
+      background: #555; 
+  }
+  overflow-y: hidden;
+}

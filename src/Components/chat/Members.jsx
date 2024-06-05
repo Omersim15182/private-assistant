@@ -4,6 +4,7 @@ import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './chat.css'
 import axios from 'axios';
+import { useData } from '../../Pages/DataContext';
 
 export default function Members({ onSelectMember }) {
 
@@ -11,6 +12,8 @@ export default function Members({ onSelectMember }) {
   const [inputName, setInputName] = useState('');
   const [userDb, setUserDb] = useState([]);
 
+  const { user } = useData();
+ console.log('userrr',user.id);
 
   const handleSelectMember = (user) => {
     onSelectMember(user);
@@ -27,10 +30,10 @@ export default function Members({ onSelectMember }) {
       return;
     }
     try {
-      const response = await axios.get('http://localhost:3500/chat/createContactId', 
-      { 
-        withCredentials: true 
-      });
+      const response = await axios.get('http://localhost:3500/chat/createContactId',
+        {
+          withCredentials: true
+        });
       const newUser = { id: response.data.id, name: inputName, picture: pic };
       setUsers([...users, newUser]);
       setInputName('');
@@ -43,38 +46,33 @@ export default function Members({ onSelectMember }) {
   //Get request to retrieve contacts from db
   const fetchContact = async () => {
     try {
-      const response = await axios.get('http://localhost:3500/chat/messages/retrieveContact', 
-      { 
-        withCredentials: true 
-      });
+      const response = await axios.get('http://localhost:3500/chat/messages/retrieveContact',
+        {
+          withCredentials: true
+        });
       console.log('response', response);
       const contact = response.data;
       setUserDb(...userDb, contact);
       setUsers(response.data.map(contact => ({ ...contact, picture: pic })));
     } catch (erorr) {
       console.error('Error to fetch contact: ', erorr);
-      
     }
   };
 
   useEffect(() => {
     fetchContact();
   }, []);
-  console.log('my users', users);
 
+  const filterUser = users.filter(u => u.id !== user.id )
+  console.log('my users', users);
+  console.log('users  db', userDb);
   return (
     <div className='members'>
       <Card className='members-card'>
         <Card.Body >
           <Card.Title>Chat</Card.Title>
-          <input
-            placeholder='Add name'
-            value={inputName}
-            onChange={handleInputChange}
-          >
-          </input>
-          <Button onClick={addContact}>Add contact</Button>
-          {users.map((user, index) => (
+          <Button onClick={addContact}>Show contacts </Button>
+          {filterUser.map((user, index) => (
             <div key={index} className='chat' onClick={() => handleSelectMember(user)}>
               <img src={user.picture} alt='Profile' className='user-picture' />
               <div className='chat-details'>

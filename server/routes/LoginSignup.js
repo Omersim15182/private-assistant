@@ -4,6 +4,7 @@ const pool = require('../dbConfig');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
+const { v4: uuidv4 } = require('uuid'); 
 
 dotenv.config();
 
@@ -31,7 +32,9 @@ router.post('/login', async (req, res) => {
             maxAge: 3600000 ,
             httpOnly:true,
         });
-        res.status(200).json({ token });
+        res.status(200).json({ token, user });
+       
+       
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -40,8 +43,10 @@ router.post('/login', async (req, res) => {
 
 router.post('/signup', async (req, res) => {
   const {email , name , password} = req.body;
+  const newId = uuidv4() ;
+
   try{
-   const result = await pool.query('INSERT INTO users (email , name , password) VALUES ($1,$2,$3)',[email,name,password]);
+   const result = await pool.query('INSERT INTO users (email , name , password ,id) VALUES ($1,$2,$3,$4)',[email,name,password,newId]);
    res.status(200).json({Signup : 'Sign up success'})
   }catch(error){
     console.error('Error :',error);

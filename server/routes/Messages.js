@@ -41,7 +41,7 @@ router.post('/createMessage',async(req,res)=>{
   //Get request to retrieve contacts from db
   router.get('/messages/retrieveContact',async(req,res)=>{
     try  {
-      const data = await db.query('SELECT DISTINCT id, name FROM messages');
+      const data = await db.query('SELECT DISTINCT id, name FROM users');
       console.log('Data retrieved from DB:', data.rows);
       res.json(data.rows);
     } catch (error){

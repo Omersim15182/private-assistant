@@ -3,11 +3,13 @@ import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useData } from '../../Pages/DataContext';
 
 export default function Login() {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const history = useHistory();
+    const { setUser } = useData();
 
     const handleName = (e) => {
         setName(e.target.value);
@@ -30,7 +32,13 @@ export default function Login() {
             {withCredentials:true}
         );
             const token = response.data.token;
+            const userData = response.data.user;
+
             console.log('Login successful. Token:', token);
+            console.log('User data:', userData);
+
+            setUser(userData);
+
             Cookies.set('token', token, { expires: 1 / 24, path: '/',secure: true  })
             setPassword('');
             history.push('../chat/Chat');
