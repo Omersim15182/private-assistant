@@ -4,12 +4,29 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import io from 'socket.io-client'
 
 export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([{ messages: [{ name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
   const [contactMessages, setContactMessages] = useState([]);
+
+  //Socket io
+  useEffect(() => {
+    const socket = io.connect("http://localhost:3500");
+
+    if(selectedMember && selectedMember.id){
+      socket.emit('join_room',selectedMember.id);
+      console.log('Emitted join_room with:', selectedMember.id);
+    }
+
+    return () => {
+      socket.disconnect();
+    };
+
+  },[selectedMember])
   console.log('sel', selectedMember.id);
+
   //Function for send new message 
   const sentMessage = () => {
     const updatedUsers = users.map(user => ({
@@ -26,8 +43,6 @@ export default function Message({ selectedMember }) {
     setUsers(updatedUsers);
     setContactMessages([...contactMessages, { message: newMessageText }]);
     setNewMessageText('');
-
-
   };
 
   //Function for save the message 
@@ -85,7 +100,7 @@ export default function Message({ selectedMember }) {
 
 
   // console.log('selected Member test',selectedMember);
-  // console.log('contact:',contactMessages);
+  console.log('contact:', contactMessages);
   console.log('users:', users);
   // console.log('selectedMember:', selectedMember);
 

@@ -11,9 +11,8 @@ export default function Members({ onSelectMember }) {
   const [users, setUsers] = useState([{ id: '', name: '', picture: pic }])
   const [inputName, setInputName] = useState('');
   const [userDb, setUserDb] = useState([]);
-
+  
   const { user } = useData();
- console.log('userrr',user.id);
 
   const handleSelectMember = (user) => {
     onSelectMember(user);
