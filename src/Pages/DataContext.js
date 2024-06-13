@@ -6,11 +6,10 @@ export const useData = () => useContext(DataContex);
 
 export const DataProvider = ({ children }) => {
     const [boardTitle, setBoardTitle] = useState('');
-    const [user, setUser] = useState([]);
 
     
     return (
-        <DataContex.Provider value={{ boardTitle, setBoardTitle ,user,setUser}}>
+        <DataContex.Provider value={{ boardTitle, setBoardTitle }}>
             {children}
         </DataContex.Provider>
     )

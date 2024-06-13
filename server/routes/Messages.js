@@ -14,7 +14,6 @@ router.get('/createContactId',(req, res) => {
   //Post request to create a new message
 router.post('/createMessage',async(req,res)=>{
     try{
-      
       const {messages} = req.body;
       const message = messages[0];
       console.log(message);

@@ -4,31 +4,68 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
-import io from 'socket.io-client'
+import io from 'socket.io-client';
 
 export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([{ messages: [{ name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
   const [contactMessages, setContactMessages] = useState([]);
+  const [userAuthor, setUserAuthor] = useState('');
 
-  //Socket io
+  // Socket.io setup
   useEffect(() => {
     const socket = io.connect("http://localhost:3500");
 
-    if(selectedMember && selectedMember.id){
-      socket.emit('join_room',selectedMember.id);
+    if (selectedMember && selectedMember.id) {
+      socket.emit('join_room', selectedMember.id);
       console.log('Emitted join_room with:', selectedMember.id);
     }
+
+    socket.on('receive_message', ({ from, message }) => {
+      if (from === selectedMember.id) {
+        setContactMessages(prevMessages => [...prevMessages, { message }]);
+      }
+    });
 
     return () => {
       socket.disconnect();
     };
+  }, [selectedMember]);
 
-  },[selectedMember])
-  console.log('sel', selectedMember.id);
+  // Fetch messages and user login info
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`, {
+          withCredentials: true,
+        });
+        setContactMessages(response.data);
+        console.log('Fetched messages with contact:', response.data);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
 
-  //Function for send new message 
-  const sentMessage = () => {
+    const fetchUserLogin = async () => {
+      try {
+        const response = await axios.get('http://localhost:3500/home/userlogin', {
+          withCredentials: true,
+        });
+        setUserAuthor(response.data);
+        console.log('Fetched user login:', response.data);
+      } catch (error) {
+        console.error('Error fetching user login:', error);
+      }
+    };
+
+    if (selectedMember && selectedMember.id) {
+      fetchMessages();
+      fetchUserLogin();
+    }
+  }, [selectedMember]);
+
+  // Function to send a new message
+  const sendMessage = () => {
     const updatedUsers = users.map(user => ({
       messages: [
         ...user.messages,
@@ -45,65 +82,37 @@ export default function Message({ selectedMember }) {
     setNewMessageText('');
   };
 
-  //Function for save the message 
-  const handleChange = event => {
+  // Function to handle input change
+  const handleChange = (event) => {
     setNewMessageText(event.target.value);
   };
 
-  //post request using axios
+  // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const lastUser = users[users.length - 1];
     const updatedUser = {
-
       messages: [
         {
           name: lastUser.messages[lastUser.messages.length - 1].name,
           message: lastUser.messages[lastUser.messages.length - 1].message,
           date: lastUser.messages[lastUser.messages.length - 1].date,
           id: lastUser.messages[lastUser.messages.length - 1].id,
-
         },
       ],
-    }; console.log('lastUser', lastUser);
-
-    {
-      axios.post(`http://localhost:3500/chat/createMessage`, updatedUser,
-        {
-          withCredentials: true
-        })
-        .then(response => console.log(response))
-        .catch(err => console.log(err))
-    }
-  }
-
-  const fetchMessages = async () => {
-
+    };
+    console.log('lastUser:', lastUser);
     try {
-      const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`,
-        {
-          withCredentials: true
-        });
-      setContactMessages(response.data);
-      console.log('res', response.data);
-    } catch (error) {
-      console.error('Error fetching message: ', error);
+      await axios.post('http://localhost:3500/chat/createMessage', updatedUser, {
+        withCredentials: true,
+      });
+      console.log('Message sent successfully');
+    } catch (err) {
+      console.error('Error sending message:', err);
     }
   };
-  useEffect(() => {
-    if (selectedMember && selectedMember.id) {
-      fetchMessages();
-    }
-  }, [selectedMember]);
-
-
-
-  // console.log('selected Member test',selectedMember);
-  console.log('contact:', contactMessages);
-  console.log('users:', users);
-  // console.log('selectedMember:', selectedMember);
-
+  console.log('admin',userAuthor);
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -118,7 +127,7 @@ export default function Message({ selectedMember }) {
             </div>
           </Card.Body>
           <div className='send-button'>
-            <Button variant="success" type="submit" onClick={sentMessage}>
+            <Button variant="success" type="submit" onClick={sendMessage}>
               Send
             </Button>
           </div>

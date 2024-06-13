@@ -4,10 +4,8 @@ const pool = require('../dbConfig');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
-const { v4: uuidv4 } = require('uuid'); 
-
+const { v4: uuidv4 } = require('uuid');
 dotenv.config();
-
 
 
 // Function to generate JWT access token
@@ -17,24 +15,28 @@ function generateAccessToken(username) {
 
 router.post('/login', async (req, res) => {
     const { name, password } = req.body;
+
     try {
         const query = 'SELECT * FROM users WHERE name = $1 AND password = $2';
         const result = await pool.query(query, [name, password]);
         const user = result.rows[0];
+        const currentDate = new Date();
+
+        await pool.query('INSERT INTO login (name,id,date) VALUES ($1,$2,$3)', [user.name, user.id,currentDate]);
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         const token = jwt.sign({ name: user.name, password: user.password }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
         res.cookie('token', token, {
-            secure: process.env.NODE_ENV === 'production', 
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'Strict',
-            path:'/',
-            maxAge: 3600000 ,
-            httpOnly:true,
+            path: '/',
+            maxAge: 3600000,
+            httpOnly: true,
         });
         res.status(200).json({ token, user });
-       
-       
+
+
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -42,15 +44,33 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/signup', async (req, res) => {
-  const {email , name , password} = req.body;
-  const newId = uuidv4() ;
+    const { email, name, password } = req.body;
+    const newId = uuidv4();
 
-  try{
-   const result = await pool.query('INSERT INTO users (email , name , password ,id) VALUES ($1,$2,$3,$4)',[email,name,password,newId]);
-   res.status(200).json({Signup : 'Sign up success'})
-  }catch(error){
-    console.error('Error :',error);
-  }
+    try {
+        const result = await pool.query('INSERT INTO users (email , name , password ,id) VALUES ($1,$2,$3,$4)', [email, name, password, newId]);
+        res.status(200).json({ Signup: 'Sign up success' })
+    } catch (error) {
+        console.error('Error :', error);
+    }
+})
+
+router.get('/userlogin', async (req, res) => {
+    try {
+        const query = 'SELECT * FROM login ORDER BY date DESC LIMIT ALL';
+        const result = await pool.query(query);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'No login records found' });
+        }
+
+        const lastLoginUser = result.rows[0];
+        console.log('last',lastLoginUser);
+        res.status(200).json(lastLoginUser);
+    } catch (error) {
+        console.error('Error fetching last login user:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 })
 
 
