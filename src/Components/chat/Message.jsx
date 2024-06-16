@@ -77,6 +77,14 @@ export default function Message({ selectedMember }) {
         },
       ],
     }));
+    // Emit the message via socket
+    const socket = io.connect("http://localhost:3500");
+    socket.emit('send_message', {
+      message:newMessageText , 
+      id: selectedMember.id,
+      idAuthor : userAuthor.id
+    });
+
     setUsers(updatedUsers);
     setContactMessages([...contactMessages, { message: newMessageText }]);
     setNewMessageText('');
@@ -95,14 +103,14 @@ export default function Message({ selectedMember }) {
     const updatedUser = {
       messages: [
         {
-          name: lastUser.messages[lastUser.messages.length - 1].name,
+          from: userAuthor.id,
+          to: selectedMember.id,
           message: lastUser.messages[lastUser.messages.length - 1].message,
           date: lastUser.messages[lastUser.messages.length - 1].date,
-          id: lastUser.messages[lastUser.messages.length - 1].id,
         },
       ],
     };
-    console.log('lastUser:', lastUser);
+    console.log('lastUser:', lastUser.messages[lastUser.messages.length - 1].id);
     try {
       await axios.post('http://localhost:3500/chat/createMessage', updatedUser, {
         withCredentials: true,
@@ -112,7 +120,9 @@ export default function Message({ selectedMember }) {
       console.error('Error sending message:', err);
     }
   };
-  console.log('admin',userAuthor);
+  console.log('admin', userAuthor);
+  console.log('touch', selectedMember.id);
+
   return (
     <div>
       <form onSubmit={handleSubmit}>

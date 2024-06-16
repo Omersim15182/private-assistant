@@ -1,13 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./dbConfig'); 
-const { v4: uuidv4 } = require('uuid'); 
-const cookieParser = require('cookie-parser');  
+const db = require('./dbConfig');
+const { v4: uuidv4 } = require('uuid');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 //Socket.io
 const http = require('http');
-const {Server} = require('socket.io');
+const { Server } = require('socket.io');
 
 // Create an instance of Express
 const app = express();
@@ -15,7 +15,7 @@ const app = express();
 app.use(cookieParser());
 app.use(cors({
   origin: 'http://localhost:3000',
-  credentials: true 
+  credentials: true
 }));
 
 app.use(express.json());
@@ -29,20 +29,32 @@ app.use("/chat", chatRouter);
 app.use("/home", homeRouter);
 
 // Create an HTTP server
-const server  = http.createServer(app);
-const io = new Server (server,{
+const server = http.createServer(app);
+const io = new Server(server, {
   cors: {
-    origin:"http://localhost:3000",
-    methods:["GET","POST"],
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
   },
 });
 // Listen for new connections from clients
 io.on("connection", (socket) => {
   console.log('User connected:', socket.id);
 
-  socket.on("join_room",(data) => {
+  socket.on("join_room", (data) => {
     socket.join(data);
-    console.log('User joined room',data);
+    console.log('User joined room', data);
+  });
+
+  // Listen for 'send_message' event
+  socket.on("send_message", (data) => {
+    const { id, idAuthor, message } = data;
+    console.log(`Message received: ${message} from ${idAuthor} (Order ID: ${id})`);
+    io.to(id).emit('receive_message', {
+      from: idAuthor,
+      message,
+      id,
+    })
+
   })
 
   socket.on("disconnect", () => {

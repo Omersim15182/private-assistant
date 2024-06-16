@@ -16,8 +16,8 @@ router.post('/createMessage',async(req,res)=>{
     try{
       const {messages} = req.body;
       const message = messages[0];
-      console.log(message);
-      await db.query('INSERT INTO messages (id, name,message, date) VALUES ($1, $2, $3,$4)', [message.id,message.name, message.message, message.date]);
+      console.log('message:',message);
+      await db.query('INSERT INTO messages (from_id, to_id,message, date) VALUES ($1, $2, $3,$4)', [message.from,message.to, message.message, message.date]);
       res.status(200).json({message:'Message created seccessfully'});
     }  catch(error){
       console.error('Error creating message:',error);
