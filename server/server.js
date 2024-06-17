@@ -40,23 +40,6 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log('User connected:', socket.id);
 
-  socket.on("join_room", (data) => {
-    socket.join(data);
-    console.log('User joined room', data);
-  });
-
-  // Listen for 'send_message' event
-  socket.on("send_message", (data) => {
-    const { id, idAuthor, message } = data;
-    console.log(`Message received: ${message} from ${idAuthor} (Order ID: ${id})`);
-    io.to(id).emit('receive_message', {
-      from: idAuthor,
-      message,
-      id,
-    })
-
-  })
-
   socket.on("disconnect", () => {
     console.log("User disconnected", socket.id);
   });

@@ -30,7 +30,9 @@ router.post('/createMessage',async(req,res)=>{
   router.get('/:userId',async(req,res)=>{
     try{
       const userId = req.params.userId;
-      const data = await db.query('SELECT * FROM messages WHERE id = $1', [userId]);
+      console.log('userId:',req.params.userId);
+      const data = await db.query('SELECT * FROM messages WHERE to_id = $1 OR from_id = $1', [userId]);
+      console.log('test for userId:',data.rows);
       res.json(data.rows);
     } catch(error) {
       console.error('Error in fetch messages oreder the key: ',error)

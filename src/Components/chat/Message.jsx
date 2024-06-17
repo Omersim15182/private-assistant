@@ -4,7 +4,6 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
-import io from 'socket.io-client';
 
 export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([{ messages: [{ name: '', message: '', date: '', id: '' }] }]);
@@ -12,25 +11,6 @@ export default function Message({ selectedMember }) {
   const [contactMessages, setContactMessages] = useState([]);
   const [userAuthor, setUserAuthor] = useState('');
 
-  // Socket.io setup
-  useEffect(() => {
-    const socket = io.connect("http://localhost:3500");
-
-    if (selectedMember && selectedMember.id) {
-      socket.emit('join_room', selectedMember.id);
-      console.log('Emitted join_room with:', selectedMember.id);
-    }
-
-    socket.on('receive_message', ({ from, message }) => {
-      if (from === selectedMember.id) {
-        setContactMessages(prevMessages => [...prevMessages, { message }]);
-      }
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [selectedMember]);
 
   // Fetch messages and user login info
   useEffect(() => {
@@ -39,8 +19,13 @@ export default function Message({ selectedMember }) {
         const response = await axios.get(`http://localhost:3500/chat/${selectedMember.id}`, {
           withCredentials: true,
         });
-        setContactMessages(response.data);
-        console.log('Fetched messages with contact:', response.data);
+        const messages = response.data
+        console.log('test messages',messages);
+        const filteredMessages = messages.filter((u) => u.from_id === userAuthor.id || u.to_id === userAuthor.id);
+        console.log('filter',filteredMessages);
+        setContactMessages(filteredMessages);
+        console.log('test fetchMessage');
+        console.log('Fetched messages with contact:', messages);
       } catch (error) {
         console.error('Error fetching messages:', error);
       }
@@ -62,7 +47,7 @@ export default function Message({ selectedMember }) {
       fetchMessages();
       fetchUserLogin();
     }
-  }, [selectedMember]);
+  }, [selectedMember,userAuthor.id]);
 
   // Function to send a new message
   const sendMessage = () => {
@@ -77,13 +62,6 @@ export default function Message({ selectedMember }) {
         },
       ],
     }));
-    // Emit the message via socket
-    const socket = io.connect("http://localhost:3500");
-    socket.emit('send_message', {
-      message:newMessageText , 
-      id: selectedMember.id,
-      idAuthor : userAuthor.id
-    });
 
     setUsers(updatedUsers);
     setContactMessages([...contactMessages, { message: newMessageText }]);
@@ -110,7 +88,7 @@ export default function Message({ selectedMember }) {
         },
       ],
     };
-    console.log('lastUser:', lastUser.messages[lastUser.messages.length - 1].id);
+
     try {
       await axios.post('http://localhost:3500/chat/createMessage', updatedUser, {
         withCredentials: true,
@@ -121,7 +99,7 @@ export default function Message({ selectedMember }) {
     }
   };
   console.log('admin', userAuthor);
-  console.log('touch', selectedMember.id);
+ 
 
   return (
     <div>
