@@ -4,12 +4,16 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:3500'); 
 
 export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([{ messages: [{ name: '', message: '', date: '', id: '' }] }]);
   const [newMessageText, setNewMessageText] = useState('');
   const [contactMessages, setContactMessages] = useState([]);
   const [userAuthor, setUserAuthor] = useState('');
+  const [socketMessage, setSocketMessage] = useState('');
 
 
   // Fetch messages and user login info
@@ -20,9 +24,7 @@ export default function Message({ selectedMember }) {
           withCredentials: true,
         });
         const messages = response.data
-        console.log('test messages',messages);
         const filteredMessages = messages.filter((u) => u.from_id === userAuthor.id || u.to_id === userAuthor.id);
-        console.log('filter',filteredMessages);
         setContactMessages(filteredMessages);
         console.log('test fetchMessage');
         console.log('Fetched messages with contact:', messages);
@@ -49,6 +51,20 @@ export default function Message({ selectedMember }) {
     }
   }, [selectedMember,userAuthor.id]);
 
+  // Listen for serverMsg events from the server
+   useEffect(() => {
+    if (!socket) {
+      return;
+    }
+    socket.on('serverMsg',(msg) => {
+      console.log('Received message from server:', msg);
+      setContactMessages((prevMessages) => [...prevMessages,msg]);
+    });
+    return () => {
+      socket.off('serverMsg');
+    };
+   },[]);
+
   // Function to send a new message
   const sendMessage = () => {
     const updatedUsers = users.map(user => ({
@@ -65,6 +81,7 @@ export default function Message({ selectedMember }) {
 
     setUsers(updatedUsers);
     setContactMessages([...contactMessages, { message: newMessageText }]);
+    setSocketMessage(newMessageText);
     setNewMessageText('');
   };
 
@@ -93,6 +110,14 @@ export default function Message({ selectedMember }) {
       await axios.post('http://localhost:3500/chat/createMessage', updatedUser, {
         withCredentials: true,
       });
+       // Emit clientMsg event to server via Socket.io
+       console.log('new',socketMessage);
+       socket.emit('clientMsg', socketMessage);
+
+       // Update local state to reflect sent message
+      setContactMessages((prevMessages) => [...prevMessages, { message: socketMessage }]);
+      setNewMessageText('');
+
       console.log('Message sent successfully');
     } catch (err) {
       console.error('Error sending message:', err);

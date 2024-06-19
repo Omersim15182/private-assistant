@@ -1,52 +1,39 @@
+// Import required modules
 const express = require('express');
 const cors = require('cors');
-const db = require('./dbConfig');
-const { v4: uuidv4 } = require('uuid');
 const cookieParser = require('cookie-parser');
-require('dotenv').config();
+const { createSocket } = require('./sockets/appSocket'); 
+require('dotenv').config(); 
 
-//Socket.io
+// Socket.io dependencies
 const http = require('http');
 const { Server } = require('socket.io');
 
 // Create an instance of Express
 const app = express();
 
-app.use(cookieParser());
+// Middleware setup
+app.use(cookieParser()); 
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
+  origin: 'http://localhost:3000', // Allow requests from this origin
+  credentials: true // Allow credentials (cookies) to be sent
 }));
+app.use(express.json()); 
 
-app.use(express.json());
-
-// Routes
+// Routes setup
 const chatRouter = require("./routes/Messages");
 const homeRouter = require("./routes/LoginSignup");
-const { disconnect } = require('process');
+app.use("/chat", chatRouter); 
+app.use("/home", homeRouter); 
 
-app.use("/chat", chatRouter);
-app.use("/home", homeRouter);
-
-// Create an HTTP server
+// Create an HTTP server using Express app
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-  },
-});
-// Listen for new connections from clients
-io.on("connection", (socket) => {
-  console.log('User connected:', socket.id);
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected", socket.id);
-  });
-});
 // Start the server
 const port = 3500;
 server.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
+// Initialize socket.io
+createSocket(server); 
