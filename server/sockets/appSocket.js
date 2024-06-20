@@ -16,7 +16,7 @@ exports.createSocket = (server) => {
             console.log('client msg is : ', msg);
 
             // Send a message from server to client
-           io.sockets.emit('serverMsg',"message from server: "+msg);
+           io.sockets.emit('serverMsg',msg);
         })
     });
 

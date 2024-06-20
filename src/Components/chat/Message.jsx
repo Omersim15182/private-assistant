@@ -58,7 +58,7 @@ export default function Message({ selectedMember }) {
     }
     socket.on('serverMsg',(msg) => {
       console.log('Received message from server:', msg);
-      setContactMessages((prevMessages) => [...prevMessages,msg]);
+      setContactMessages((prevMessages) => [...prevMessages,{ message: msg }]);
     });
     return () => {
       socket.off('serverMsg');
@@ -80,7 +80,7 @@ export default function Message({ selectedMember }) {
     }));
 
     setUsers(updatedUsers);
-    setContactMessages([...contactMessages, { message: newMessageText }]);
+    // setContactMessages([...contactMessages, { message: newMessageText }]);
     setSocketMessage(newMessageText);
     setNewMessageText('');
   };
@@ -115,7 +115,6 @@ export default function Message({ selectedMember }) {
        socket.emit('clientMsg', socketMessage);
 
        // Update local state to reflect sent message
-      setContactMessages((prevMessages) => [...prevMessages, { message: socketMessage }]);
       setNewMessageText('');
 
       console.log('Message sent successfully');
