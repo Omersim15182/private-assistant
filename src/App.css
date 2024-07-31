@@ -54,7 +54,6 @@
   transition: background-color 0.3s ease; /* Add transition for smooth effect */
 }
 
-/* Add hover effect */
 .window-container:hover {
   background-color: #f0f0f0; /* Change to your desired background color */
 }

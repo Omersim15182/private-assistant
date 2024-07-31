@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import pic from '/Users/nofar simchi/Desktop/Omer Projects/React project/private-assistant/src/photos/istockphoto-1437816897-1024x1024.jpg';
+import pic from '../../photos/istockphoto-1437816897-1024x1024.jpg';
 import { Card } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import './chat.css';
@@ -29,7 +29,7 @@ export default function Members({ onSelectMember }) {
       setUsers([...users, newUser]);
       setInputName('');
     } catch (error) {
-      console.error('Error fetching ID:', error);
+      console.error('Error fetching contact:', error);
     }
   };
 

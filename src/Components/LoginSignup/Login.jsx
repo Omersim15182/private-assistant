@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
 export default function Login() {
+
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const history = useHistory();
@@ -17,7 +18,7 @@ export default function Login() {
     }
 
 
-    //Post request
+    //Post request to create cookie with token
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -28,10 +29,11 @@ export default function Login() {
             },
             {withCredentials:true}
         );
+
             const token = response.data.token;
             const userData = response.data.user;
 
-            console.log('Login successful. Token:', token);
+            console.log('Login successful. Token:');
             console.log('User data:', userData);
 
             Cookies.set('token', token, { expires: 1 / 24, path: '/',secure: true  })

@@ -9,8 +9,8 @@ dotenv.config();
 
 
 // Function to generate JWT access token
-function generateAccessToken(username) {
-    return jwt.sign({ username: username.name }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+function generateAccessToken(user) {
+    return jwt.sign({ name: user.name, password: user.password }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
 }
 
 router.post('/login', async (req, res) => {
@@ -26,7 +26,8 @@ router.post('/login', async (req, res) => {
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-        const token = jwt.sign({ name: user.name, password: user.password }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
+
+        const token = generateAccessToken(user);
         res.cookie('token', token, {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'Strict',
@@ -49,7 +50,7 @@ router.post('/signup', async (req, res) => {
 
     try {
         const result = await pool.query('INSERT INTO users (email , name , password ,id) VALUES ($1,$2,$3,$4)', [email, name, password, newId]);
-        res.status(200).json({ Signup: 'Sign up success' })
+        res.status(200).json({ Signup: 'Sign Up success' })
     } catch (error) {
         console.error('Error :', error);
     }
