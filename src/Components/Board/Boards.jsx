@@ -49,9 +49,10 @@ export default function Boards() {
           <Card key={board.id}>
           <Card.Header>
             <ContextAwareToggle eventKey={board.id}>Click me!</ContextAwareToggle>
-            <Button variant="dark" onClick={addBoard}>
+            <div className="btn-add">
+            <Button  variant="dark" onClick={addBoard}>
               Add board
-            </Button>
+            </Button></div>
           </Card.Header>
           <Accordion.Collapse eventKey={board.id}>
             <Card.Body>

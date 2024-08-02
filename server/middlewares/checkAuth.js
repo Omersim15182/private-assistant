@@ -6,7 +6,7 @@ const checkAuth = (req, res, next) => {
     try {
         
         const token = req.cookies.token;   
-        console.log('token', token);
+        console.log('test',req.headers);
         if (!token) {
             return res.status(401).json({ message: "Auth failed: No token provided" });
         }

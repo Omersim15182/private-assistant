@@ -7,26 +7,24 @@ const cookieParser = require('cookie-parser');
 const { v4: uuidv4 } = require('uuid');
 dotenv.config();
 
-
 // Function to generate JWT access token
 function generateAccessToken(user) {
-    return jwt.sign({ name: user.name, password: user.password }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
+    return jwt.sign({ id: user.id, password: user.password }, process.env.TOKEN_SECRET, { expiresIn: '1h' });
 }
+
 
 router.post('/login', async (req, res) => {
     const { name, password } = req.body;
-
+    
     try {
         const query = 'SELECT * FROM users WHERE name = $1 AND password = $2';
         const result = await pool.query(query, [name, password]);
         const user = result.rows[0];
         const currentDate = new Date();
-
         await pool.query('INSERT INTO login (name,id,date) VALUES ($1,$2,$3)', [user.name, user.id,currentDate]);
         if (!user) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-
         const token = generateAccessToken(user);
         res.cookie('token', token, {
             secure: process.env.NODE_ENV === 'production',
@@ -57,23 +55,24 @@ router.post('/signup', async (req, res) => {
 })
 
 router.get('/userlogin', async (req, res) => {
+    const token = req.cookies.token;
+    
+    if (!token) return; // There is no token.
+    
+    let verifiedUser;
+
     try {
-        const query = 'SELECT * FROM login ORDER BY date DESC LIMIT ALL';
-        const result = await pool.query(query);
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: 'No login records found' });
+        verifiedUser = jwt.verify(token, process.env.TOKEN_SECRET);
+        if (verifiedUser) {
+            res.status(200).json(verifiedUser);
         }
-
-        const lastLoginUser = result.rows[0];
-        console.log('last',lastLoginUser);
-        res.status(200).json(lastLoginUser);
-    } catch (error) {
-        console.error('Error fetching last login user:', error);
-        res.status(500).json({ message: 'Internal server error' });
     }
+    catch(e) {
+       console.error('Error in the login',e);
+    }
+
+    if (!verifiedUser) return; // There is no user with the matching token / secret.
+    console.log('veri', verifiedUser );
 })
-
-
 
 module.exports = router;

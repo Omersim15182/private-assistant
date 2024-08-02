@@ -26,10 +26,10 @@ export default function Cards() {
   };
 
   return (
-    <div>
+    <div >
       {card.map(({ message, id }) => (
-        <div key={id}>
-          <input
+        <div key={id} >
+          <input 
             placeholder="Enter card"
             value={message}
             onChange={(e) => handleText(e, id)}
