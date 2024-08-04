@@ -6,7 +6,7 @@ import "./chat.css";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 
-export default function Members() {
+export default function Members({ onSelectMember }) {
   const [users, setUsers] = useState([]); //All the users in the db
   const [contactChat, setContactChat] = useState([]); //All the users that choose for chat
   const [admin, setAdmin] = useState({ id: "" }); //The user who login
@@ -23,6 +23,10 @@ export default function Members() {
     setContacts((prevContacts) =>
       prevContacts.filter((prevContact) => prevContact.id !== contcat.id)
     );
+  };
+
+  const handleSelectMember = (user) => {
+    onSelectMember(user);
   };
 
   useEffect(() => {
@@ -165,7 +169,7 @@ export default function Members() {
           </>
           <div>
             {contactChat.map((contact) => (
-              <div key={contact.id}>
+              <div key={contact.id} onClick={() => handleSelectMember(contact)}>
                 <img
                   src={contact.picture}
                   alt="Profile"
