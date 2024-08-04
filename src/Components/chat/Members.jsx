@@ -6,21 +6,28 @@ import "./chat.css";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 
-export default function Members({ onSelectMember }) {
-  const [users, setUsers] = useState([{ id: "", name: "", picture: pic }]);
-  const [userDb, setUserDb] = useState([]);
-  const [contactChat, setContactChat] = useState([]);
+export default function Members() {
+  const [users, setUsers] = useState([]); //All the users in the db
+  const [contactChat, setContactChat] = useState([]); //All the users that choose for chat
+  const [admin, setAdmin] = useState({ id: "" }); //The user who login
+  const [contacts, setContacts] = useState([]); //All the users that available for choose
+
+  // Toggle modal visibility
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const showContactChat = (contcat) => {
-    setContactChat((prevContact) => [...prevContact,contcat])
+  // Add contact to the chat list && remove the contacts that choose for chat
+  const chooseContactChat = (contcat) => {
+    setContactChat((prevContact) => [...prevContact, contcat]);
+    setContacts((prevContacts) =>
+      prevContacts.filter((prevContact) => prevContact.id !== contcat.id)
+    );
   };
 
   useEffect(() => {
     // Get request to retrieve contacts from db
-    const fetchContact = async () => {
+    async function fetchData() {
       try {
         const response = await axios.get(
           "http://localhost:3500/chat/messages/retrieveContact",
@@ -29,17 +36,14 @@ export default function Members({ onSelectMember }) {
           }
         );
         console.log("response", response);
-        const contact = response.data;
-        setUserDb((prevUserDb) => [...prevUserDb, ...contact]);
         setUsers(
           response.data.map((contact) => ({ ...contact, picture: pic }))
         );
       } catch (error) {
         console.error("Error to fetch contact: ", error);
       }
-    };
 
-    const fetchUserLogin = async () => {
+      //Get request to fetch the user that login
       try {
         const response = await axios.get(
           "http://localhost:3500/home/userlogin",
@@ -47,20 +51,68 @@ export default function Members({ onSelectMember }) {
             withCredentials: true,
           }
         );
-        const user = response.data;
-        console.log("test", user);
+        setAdmin({ id: response.data.id });
       } catch (error) {
         console.error("login error", error);
       }
-    };
-
-    fetchContact();
-    fetchUserLogin();
+    }
+    fetchData();
   }, []);
 
+  // Filter when there is a change in the admin
+  useEffect(() => {
+    if (!admin.id) return;
+
+    setContacts(users.filter((user) => user.id !== admin.id));
+  }, [admin.id, users]);
+
+  useEffect(() => {
+    async function getContactsChat() {
+      //Post request to show to chat contacts from
+      try {
+        const response = await axios.post(
+          "http://localhost:3500/Contacts/getChatContacts",
+          {
+            userAdminId: admin,
+          },
+          { withCredentials: true }
+        );
+        console.log("responses", response.data);
+        console.log("aaaas", admin);
+        setContactChat(
+          response.data.map((contact) => ({ ...contact, contact }))
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    getContactsChat();
+  }, [admin]);
+
+  //Add the contact from the chat list to the db
+  const handleSubmit = async (e, user) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(
+        "http://localhost:3500/Contacts/chatContacts",
+        {
+          userAdmin: admin,
+          contact: user,
+        },
+        { withCredentials: true }
+      );
+    } catch (e) {
+      console.error("Error to add contact to the list : ", e.response.data);
+    }
+  };
+
+  // Debugging logs
   console.log("my users", users);
-  console.log("users db", userDb);
-console.log('con',contactChat);
+  console.log("contactChat", contactChat);
+  console.log("admin", admin);
+  console.log("tset", contacts);
+
   return (
     <div className="members">
       <Card className="members-card">
@@ -70,21 +122,29 @@ console.log('con',contactChat);
             <Button variant="primary" onClick={handleShow}>
               Choose contact
             </Button>
-
             <Modal show={show} onHide={handleClose} animation={false}>
               <Modal.Header closeButton>
                 <Modal.Title>Contacts</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                {users.map((user, index) => (
-                  <div key={index} onClick={() => showContactChat(user)}>
-                    <img
-                      src={user.picture}
-                      alt="Profile"
-                      className="user-picture"
-                    />
-                    <div className="chat-details">
-                      <h3>{user.name}</h3>
+                {contacts.map((user) => (
+                  <div
+                    style={{ cursor: "pointer", width: "max-content" }}
+                    key={user.id}
+                    onClick={(e) => {
+                      handleSubmit(e, user);
+                      chooseContactChat(user);
+                    }}
+                  >
+                    <div>
+                      <img
+                        src={user.picture}
+                        alt="Profile"
+                        className="user-picture"
+                      />
+                      <div className="chat-details">
+                        <h3>{user.name}</h3>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -97,16 +157,16 @@ console.log('con',contactChat);
             </Modal>
           </>
           <div>
-            {contactChat.map((contact,index) => (
-              <div key={index}>
-                 <img
-                      src={contact.picture}
-                      alt="Profile"
-                      className="user-picture"
-                    />
-              <div className="chat-details">
-                      <h3>{contact.name}</h3>
-                    </div>
+            {contactChat.map((contact) => (
+              <div key={contact.id}>
+                <img
+                  src={contact.picture}
+                  alt="Profile"
+                  className="user-picture"
+                />
+                <div className="chat-details">
+                  <h3>{contact.name}</h3>
+                </div>
               </div>
             ))}
           </div>

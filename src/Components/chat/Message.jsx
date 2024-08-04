@@ -80,7 +80,6 @@ export default function Message({ selectedMember }) {
     }));
 
     setUsers(updatedUsers);
-    // setContactMessages([...contactMessages, { message: newMessageText }]);
     setSocketMessage(newMessageText);
     setNewMessageText('');
   };
@@ -107,7 +106,7 @@ export default function Message({ selectedMember }) {
     };
 
     try {
-      await axios.post('http://localhost:3500/chat/createMessage', updatedUser, {
+      await axios.post('http://localhost:3500/chat/AAA', updatedUser, {
         withCredentials: true,
       });
        // Emit clientMsg event to server via Socket.io
