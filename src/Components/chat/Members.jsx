@@ -63,8 +63,15 @@ export default function Members() {
   useEffect(() => {
     if (!admin.id) return;
 
-    setContacts(users.filter((user) => user.id !== admin.id));
-  }, [admin.id, users]);
+    // Filter out contacts that are already in contactChat
+    const filteredContacts = users.filter((user) => {
+      return (
+        user.id !== admin.id && !contactChat.some((chat) => chat.id === user.id)
+      );
+    });
+
+    setContacts(filteredContacts);
+  }, [admin.id, users, contactChat]);
 
   useEffect(() => {
     async function getContactsChat() {
