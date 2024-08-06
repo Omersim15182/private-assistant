@@ -6,11 +6,7 @@ const checkAuth = require("../middlewares/checkAuth");
 dotenv.config();
 
 router.get("/deleteCookie", (req, res) => {
-  res.cookie("token", {
-    httpOnly: true,
-    path: "/",
-    expires: new Date(0),
-  });
+  res.clearCookie("token");
   res.send("Logout completed successfully.");
 });
 
