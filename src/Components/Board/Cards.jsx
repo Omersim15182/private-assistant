@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import Button from "react-bootstrap/Button";
-
-const { v4: uuidv4 } = require("uuid");
+import { Button, Box, TextField, Paper } from "@mui/material";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Cards() {
   const [card, setCard] = useState([{ message: "", id: uuidv4() }]);
 
-  //Change the text in card
+  // Change the text in card
   const handleText = (e, id) => {
     const updatedCards = card.map((card) =>
       card.id === id ? { ...card, message: e.target.value } : card
@@ -14,33 +13,51 @@ export default function Cards() {
     setCard(updatedCards);
   };
 
-  //Add card
+  // Add card
   const addCard = () => {
     setCard([...card, { message: "", id: uuidv4() }]);
   };
 
-  //delete card
+  // Delete card
   const deleteCard = (id) => {
     const updatedCards = card.filter((card) => card.id !== id);
     setCard(updatedCards);
   };
 
   return (
-    <div >
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        width: 300,
+      }}
+    >
       {card.map(({ message, id }) => (
-        <div key={id} >
-          <input 
+        <Paper
+          key={id}
+          sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <TextField
             placeholder="Enter card"
+            variant="outlined"
+            fullWidth
             value={message}
             onChange={(e) => handleText(e, id)}
-          />{" "}
-          <Button variant="dark" onClick={() => deleteCard(id)}>delete card</Button>
-        </div>
+          />
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => deleteCard(id)}
+          >
+            Delete Card
+          </Button>
+        </Paper>
       ))}
 
-      <Button variant="dark" onClick={addCard}>
-        Add card
+      <Button variant="contained" color="primary" onClick={addCard}>
+        Add Card
       </Button>
-    </div>
+    </Box>
   );
 }

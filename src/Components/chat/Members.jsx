@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from "react";
 import pic from "../../photos/istockphoto-1437816897-1024x1024.jpg";
-import { Card } from "react-bootstrap";
-import Button from "react-bootstrap/Button";
-import "./chat.css";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+  Typography,
+  Modal,
+  Box,
+  Button,
+} from "@mui/material";
+import { Close as CloseIcon } from "@mui/icons-material";
 import axios from "axios";
-import Modal from "react-bootstrap/Modal";
+import "./chat.css";
 
 export default function Members({ onSelectMember }) {
-  const [users, setUsers] = useState([]); //All the users in the db
-  const [contactChat, setContactChat] = useState([]); //All the users that choose for chat
-  const [admin, setAdmin] = useState({ id: "" }); //The user who login
-  const [contacts, setContacts] = useState([]); //All the users that available for choose
-
-  // Toggle modal visibility
+  const [users, setUsers] = useState([]);
+  const [contactChat, setContactChat] = useState([]);
+  const [admin, setAdmin] = useState({ id: "" });
+  const [contacts, setContacts] = useState([]);
   const [show, setShow] = useState(false);
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  // Add contact to the chat list && remove the contacts that choose for chat
-  const chooseContactChat = (contcat) => {
-    setContactChat((prevContact) => [...prevContact, contcat]);
+  const chooseContactChat = (contact) => {
+    setContactChat((prevContact) => [...prevContact, contact]);
     setContacts((prevContacts) =>
-      prevContacts.filter((prevContact) => prevContact.id !== contcat.id)
+      prevContacts.filter((prevContact) => prevContact.id !== contact.id)
     );
   };
 
@@ -30,44 +36,35 @@ export default function Members({ onSelectMember }) {
   };
 
   useEffect(() => {
-    // Get request to retrieve contacts from db
     async function fetchData() {
       try {
         const response = await axios.get(
           "http://localhost:3500/chat/messages/retrieveContact",
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
-        console.log("response", response);
         setUsers(
           response.data.map((contact) => ({ ...contact, picture: pic }))
         );
       } catch (error) {
-        console.error("Error to fetch contact: ", error);
+        console.error("Error fetching contacts: ", error);
       }
 
-      //Get request to fetch the user that login
       try {
         const response = await axios.get(
           "http://localhost:3500/home/userlogin",
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
         setAdmin({ id: response.data.id });
       } catch (error) {
-        console.error("login error", error);
+        console.error("Login error", error);
       }
     }
     fetchData();
   }, []);
 
-  // Filter when there is a change in the admin
   useEffect(() => {
     if (!admin.id) return;
 
-    // Filter out contacts that are already in contactChat
     const filteredContacts = users.filter((user) => {
       return (
         user.id !== admin.id && !contactChat.some((chat) => chat.id === user.id)
@@ -79,17 +76,12 @@ export default function Members({ onSelectMember }) {
 
   useEffect(() => {
     async function getContactsChat() {
-      //Post request to show to chat contacts from
       try {
         const response = await axios.post(
           "http://localhost:3500/Contacts/getChatContacts",
-          {
-            userAdminId: admin,
-          },
+          { userAdminId: admin },
           { withCredentials: true }
         );
-        console.log("responses", response.data);
-        console.log("aaaas", admin);
         setContactChat(
           response.data.map((contact) => ({ ...contact, contact }))
         );
@@ -100,7 +92,6 @@ export default function Members({ onSelectMember }) {
     getContactsChat();
   }, [admin]);
 
-  //Add the contact from the chat list to the db
   const handleSubmit = async (e, user) => {
     e.preventDefault();
 
@@ -114,74 +105,108 @@ export default function Members({ onSelectMember }) {
         { withCredentials: true }
       );
     } catch (e) {
-      console.error("Error to add contact to the list : ", e.response.data);
+      console.error("Error adding contact to the list: ", e.response.data);
     }
   };
 
-  // Debugging logs
-  console.log("my users", users);
-  console.log("contactChat", contactChat);
-  console.log("admin", admin);
-  console.log("tset", contacts);
-
   return (
     <div className="members">
-      <Card className="members-card">
-        <Card.Body>
-          <Card.Title>Chat</Card.Title>
-          <>
-            <Button variant="primary" onClick={handleShow}>
-              Choose contact
-            </Button>
-            <Modal show={show} onHide={handleClose} animation={false}>
-              <Modal.Header closeButton>
-                <Modal.Title>Contacts</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
+      <Card>
+        <CardHeader title="Chat" />
+        <CardContent>
+          <Button variant="contained" color="primary" onClick={handleShow}>
+            Choose contact
+          </Button>
+          <Modal open={show} onClose={handleClose}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 400,
+                bgcolor: "background.paper",
+                borderRadius: 1,
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <IconButton
+                edge="end"
+                color="inherit"
+                onClick={handleClose}
+                aria-label="close"
+                sx={{
+                  position: "absolute",
+                  right: 8,
+                  top: 8,
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <Typography variant="h6" component="h2">
+                Contacts
+              </Typography>
+              <Box mt={2}>
                 {contacts.map((user) => (
-                  <div
-                    style={{ cursor: "pointer", width: "max-content" }}
+                  <Box
                     key={user.id}
+                    sx={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      mb: 2,
+                    }}
                     onClick={(e) => {
                       handleSubmit(e, user);
                       chooseContactChat(user);
                     }}
                   >
-                    <div>
-                      <img
-                        src={user.picture}
-                        alt="Profile"
-                        className="user-picture"
-                      />
-                      <div className="chat-details">
-                        <h3>{user.name}</h3>
-                      </div>
-                    </div>
-                  </div>
+                    <img
+                      src={user.picture}
+                      alt="Profile"
+                      className="user-picture"
+                      style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: "50%",
+                        marginRight: 16,
+                      }}
+                    />
+                    <Typography variant="body1">{user.name}</Typography>
+                  </Box>
                 ))}
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
-                  Close
-                </Button>
-              </Modal.Footer>
-            </Modal>
-          </>
-          <div>
+              </Box>
+            </Box>
+          </Modal>
+          <Box mt={2}>
             {contactChat.map((contact) => (
-              <div key={contact.id} onClick={() => handleSelectMember(contact)}>
+              <Box
+                key={contact.id}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  mb: 2,
+                }}
+                onClick={() => handleSelectMember(contact)}
+              >
                 <img
                   src={contact.picture}
                   alt="Profile"
                   className="user-picture"
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: "50%",
+                    marginRight: 16,
+                  }}
                 />
-                <div className="chat-details">
-                  <h3>{contact.name}</h3>
-                </div>
-              </div>
+                <Typography variant="body1">{contact.name}</Typography>
+              </Box>
             ))}
-          </div>
-        </Card.Body>
+          </Box>
+        </CardContent>
       </Card>
     </div>
   );

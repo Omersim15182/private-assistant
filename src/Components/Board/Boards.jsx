@@ -1,67 +1,91 @@
-import React, { useState, useContext } from "react";
-import Accordion from "react-bootstrap/Accordion";
-import AccordionContext from "react-bootstrap/AccordionContext";
-import { useAccordionButton } from "react-bootstrap/AccordionButton";
-import Card from "react-bootstrap/Card";
-import Button from "react-bootstrap/Button";
+import React, { useState } from "react";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import { v4 as uuidv4 } from "uuid";
 import "../Board/board.css";
 import Cards from "./Cards";
-import { v4 as uuidv4 } from "uuid";
 
-//Btn board colors
+// Btn board colors
 const PINK = "rgba(255, 192, 203, 0.6)";
 const BLUE = "rgba(0, 0, 255, 0.6)";
 
-//Function to change the state of the board
-function ContextAwareToggle({ eventKey }) {
+// Function to change the state of the board
+function ContextAwareToggle({ eventKey, expanded, onClick }) {
   const [textBtn, setTextBtn] = useState("Open");
-  const { activeEventKey } = useContext(AccordionContext);
 
-  const decoratedOnClick = useAccordionButton(eventKey, () => {
-    // Toggle button text
+  const handleClick = () => {
     setTextBtn((prev) => (prev === "Open" ? "Close" : "Open"));
-  });
-
-  const isCurrentEventKey = activeEventKey === eventKey;
+    onClick();
+  };
 
   return (
-    <button
-      type="button"
-      style={{ backgroundColor: isCurrentEventKey ? PINK : BLUE }}
-      onClick={decoratedOnClick}
+    <Button
+      variant="contained"
+      style={{ backgroundColor: expanded ? PINK : BLUE }}
+      onClick={handleClick}
     >
       {textBtn}
-    </button>
+    </Button>
   );
 }
 
 export default function Boards() {
-  const [boards, setBoards] = useState([{ id: uuidv4() }]);
+  const [boards, setBoards] = useState([{ id: uuidv4(), expanded: false }]);
 
   // Add a new board
   const addBoard = () => {
-    setBoards([...boards, { id: uuidv4() }]);
+    setBoards([...boards, { id: uuidv4(), expanded: false }]);
   };
+
+  const handleChange = (id) => (event, isExpanded) => {
+    setBoards(
+      boards.map((board) =>
+        board.id === id ? { ...board, expanded: isExpanded } : board
+      )
+    );
+  };
+
   return (
     <div className="board">
-     
-        {boards.map((board) => ( <Accordion defaultActiveKey={board.id}>
-          <Card key={board.id}>
-          <Card.Header>
-            <ContextAwareToggle eventKey={board.id}>Click me!</ContextAwareToggle>
-            <div className="btn-add">
-            <Button  variant="dark" onClick={addBoard}>
-              Add board
-            </Button></div>
-          </Card.Header>
-          <Accordion.Collapse eventKey={board.id}>
-            <Card.Body>
-              <Cards boardId={board.id}></Cards>
-            </Card.Body>
-          </Accordion.Collapse>
-        </Card></Accordion>
-        ))}
-      
+      {boards.map((board) => (
+        <Accordion
+          key={board.id}
+          expanded={board.expanded}
+          onChange={handleChange(board.id)}
+        >
+          <Card>
+            <CardHeader
+              action={
+                <ContextAwareToggle
+                  eventKey={board.id}
+                  expanded={board.expanded}
+                  onClick={() => {}}
+                />
+              }
+              title={
+                <div className="btn-add">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={addBoard}
+                  >
+                    Add board
+                  </Button>
+                </div>
+              }
+            />
+            <AccordionDetails>
+              <CardContent>
+                <Cards boardId={board.id} />
+              </CardContent>
+            </AccordionDetails>
+          </Card>
+        </Accordion>
+      ))}
     </div>
   );
 }

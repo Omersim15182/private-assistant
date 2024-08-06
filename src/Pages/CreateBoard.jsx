@@ -1,79 +1,77 @@
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import Modal from 'react-bootstrap/Modal';
-import { NavDropdown } from 'react-bootstrap';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useData } from './DataContext';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useData } from "./DataContext";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+import FormControl from "@mui/material/FormControl";
 
 function CreateBoard({ show, onHide }) {
-    const [workSpaceVisibility, setWorkSpaceVisibility] = useState('Workspace visible')
+  const [workSpaceVisibility, setWorkSpaceVisibility] = useState("Workspace"); // Initial value updated
+  const [inputValue, setInputValue] = useState("");
+  const { setBoardTitle } = useData();
 
-    const handleSelectVisibility = (eventKey) => {
-        setWorkSpaceVisibility(eventKey);
-    };
+  const handleSelectVisibility = (event) => {
+    setWorkSpaceVisibility(event.target.value);
+  };
 
-    const closeCreateBoard = () => {
-        setBoardTitle(inputValue);
-        onHide();
+  const closeCreateBoard = () => {
+    setBoardTitle(inputValue);
+    onHide();
+  };
 
-    };
+  const inputCatch = (event) => {
+    setInputValue(event.target.value);
+  };
 
-    const [inputValue, setInputValue] = useState('');
-
-    const inputCatch = (event) => {
-        setInputValue(event.target.value);
-    };
-    const { setBoardTitle } = useData();
-
-
-    console.log(inputValue);
-
-
-    return (
-
-        <Modal show={show} onHide={onHide}>
-            <Modal.Header closeButton>
-                <Modal.Title>Create board</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form>
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                        <Form.Label>Add board title</Form.Label>
-                        <Form.Control
-                            type="title"
-                            placeholder="Task"
-                            autoFocus
-                            onChange={inputCatch}
-
-                        />
-                    </Form.Group>
-                    <Form.Group
-                        className="mb-3"
-                        controlId="exampleForm.ControlTextarea1"
-                    >
-                        <NavDropdown title={workSpaceVisibility}
-                            id="basic-nav-dropdown"
-                            onSelect={handleSelectVisibility}>
-                            <NavDropdown.Item eventKey="Private" href="#/Private">Private</NavDropdown.Item>
-                            <NavDropdown.Item eventKey="Workspace" href="#/Workspace">Workspace</NavDropdown.Item>
-                            <NavDropdown.Item eventKey="Public" href="#/Public">Public</NavDropdown.Item>
-
-                        </NavDropdown>
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={onHide}>
-                    Close
-                </Button>
-                <Button variant="primary" as={Link} to='./Boards' onClick={closeCreateBoard}>
-                    Create board
-                </Button>
-            </Modal.Footer>
-        </Modal>
-
-    );
+  return (
+    <Dialog open={show} onClose={onHide}>
+      <DialogTitle>Create board</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="Add board title"
+          type="text"
+          fullWidth
+          variant="outlined"
+          value={inputValue}
+          onChange={inputCatch}
+        />
+        <FormControl fullWidth margin="dense">
+          <InputLabel>Visibility</InputLabel>
+          <Select
+            value={workSpaceVisibility}
+            onChange={handleSelectVisibility}
+            label="Visibility"
+          >
+            <MenuItem value="Private">Private</MenuItem>
+            <MenuItem value="Workspace">Workspace</MenuItem>
+            <MenuItem value="Public">Public</MenuItem>
+          </Select>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onHide} color="secondary">
+          Close
+        </Button>
+        <Button
+          component={Link}
+          to="./Boards"
+          onClick={closeCreateBoard}
+          color="primary"
+        >
+          Create board
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export default CreateBoard;

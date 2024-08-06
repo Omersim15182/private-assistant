@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import {
+  Card,
+  Typography,
+  Button,
+  TextField,
+  Paper,
+  CardContent,
+  CardActions,
+} from "@mui/material";
 import axios from "axios";
 import io from "socket.io-client";
 
@@ -12,6 +17,7 @@ export default function Message({ selectedMember }) {
   const [users, setUsers] = useState([
     { messages: [{ name: "", message: "", date: "", id: "" }] },
   ]);
+
   const [newMessageText, setNewMessageText] = useState("");
   const [contactMessages, setContactMessages] = useState([]);
   const [userAuthor, setUserAuthor] = useState("");
@@ -27,12 +33,12 @@ export default function Message({ selectedMember }) {
             withCredentials: true,
           }
         );
+
         const messages = response.data;
         const filteredMessages = messages.filter(
           (u) => u.from_id === userAuthor.id || u.to_id === userAuthor.id
         );
         setContactMessages(filteredMessages);
-        console.log("test fetchMessage");
         console.log("Fetched messages with contact:", messages);
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -47,6 +53,7 @@ export default function Message({ selectedMember }) {
             withCredentials: true,
           }
         );
+
         setUserAuthor(response.data);
         console.log("Fetched user login:", response.data);
       } catch (error) {
@@ -122,6 +129,7 @@ export default function Message({ selectedMember }) {
           withCredentials: true,
         }
       );
+
       // Emit clientMsg event to server via Socket.io
       console.log("new", socketMessage);
       socket.emit("clientMsg", socketMessage);
@@ -134,35 +142,52 @@ export default function Message({ selectedMember }) {
       console.error("Error sending message:", err);
     }
   };
+
   console.log("admin", userAuthor);
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Card style={{ height: "29rem", width: "35rem" }}>
-          <Card.Body>
-            <Card.Title>Messages</Card.Title>
-            {contactMessages.map((contact, index) => (
-              <p key={index}>{contact.message}</p>
-            ))}
-            <div className="friend-chat">
-              <p>Hey! I'm fine. Thanks for asking!</p>
-            </div>
-          </Card.Body>
-          <div className="send-button">
-            <Button variant="success" type="submit" onClick={sendMessage}>
-              Send
-            </Button>
-          </div>
-          <FloatingLabel controlId="floatingTextarea2" label="Comments">
-            <Form.Control
-              as="textarea"
+        <Card
+          sx={{
+            height: "29rem",
+            width: "35rem",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <CardContent sx={{ flex: 1 }}>
+            <Typography variant="h5">Messages</Typography>
+            <Paper
+              sx={{ padding: 2, height: "calc(100% - 80px)", overflow: "auto" }}
+            >
+              {contactMessages.map((contact, index) => (
+                <Typography key={index} paragraph>
+                  {contact.message}
+                </Typography>
+              ))}
+            </Paper>
+          </CardContent>
+          <CardActions>
+            <TextField
+              variant="outlined"
+              multiline
+              rows={4}
               placeholder="Leave a comment here"
-              style={{ height: "100px" }}
+              fullWidth
               value={newMessageText}
               onChange={handleChange}
+              sx={{ marginBottom: 1 }}
             />
-          </FloatingLabel>
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              onClick={sendMessage}
+            >
+              Send
+            </Button>
+          </CardActions>
         </Card>
       </form>
     </div>

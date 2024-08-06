@@ -1,19 +1,18 @@
-import React from 'react';
-import './App.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Routing from './Components/Routing';
-import { DataProvider } from './Pages/DataContext';
+import React from "react";
+import "./App.css";
+import Routing from "./Components/Routing";
+import { DataProvider } from "./Pages/DataContext";
 
-require('dotenv').config();
+require("dotenv").config();
 
 function App() {
-    return (
-        <div>
-            <DataProvider>
-                <Routing></Routing>
-            </DataProvider>
-        </div>
-    );
+  return (
+    <div>
+      <DataProvider>
+        <Routing></Routing>
+      </DataProvider>
+    </div>
+  );
 }
 
 export default App;

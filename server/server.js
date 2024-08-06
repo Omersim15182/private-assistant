@@ -26,10 +26,12 @@ app.use(express.json());
 const chatRouter = require("./routes/Messages");
 const homeRouter = require("./routes/LoginSignup");
 const contactRouter = require("./routes/Contacts");
+const logoutRouter = require("./routes/Loguot");
 
 app.use("/chat", chatRouter);
 app.use("/home", homeRouter);
 app.use("/contacts", contactRouter);
+app.use("/logout", logoutRouter);
 
 // Create an HTTP server using Express app
 const server = http.createServer(app);

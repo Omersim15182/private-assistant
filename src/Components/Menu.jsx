@@ -1,58 +1,127 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import logo from "../photos/png-transparent-hamburger-button-hot-dog-computer-icons-pancake-hot-dog-share-icon-navbar-menu-thumbnail.png";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+import MenuIcon from "@mui/icons-material/Menu";
 import CreateBoard from "../Pages/CreateBoard";
+import logoutUser from "./InfoAccount/Logout";
 
-function Menu() {
-  const [showCreateBoard, setCreateBoard] = useState(false);
+function ResponsiveAppBar() {
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [showCreateBoard, setCreateBoard] = React.useState(false);
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
   const toggleCreateBoard = () => {
     setCreateBoard(!showCreateBoard);
   };
 
+  const handleLogout = async () => {
+    try {
+      const response = await logoutUser();
+      alert(response); // Show the message in an alert
+    } catch (error) {
+      alert(error.message); // Show the error message in an alert
+    }
+  };
+
   return (
-    <Navbar bg="dark" data-bs-theme="dark">
-      <Container>
-        <Navbar.Brand>
-          {" "}
-          <img src={logo} width="30" height="30" alt="Your Logo"></img>{" "}
-          Pr.Assistant
-        </Navbar.Brand>
-        <Nav className="me-auto">
-          <Nav.Link as={Link} to="/Home">
-            Home
-          </Nav.Link>
-          <Nav.Link as={Link} to="/features">
-            Features
-          </Nav.Link>
-          <Nav.Link as={Link} to="/Chat">
-            chat
-          </Nav.Link>
-          <NavDropdown title="Options" id="basic-nav-dropdown">
-            <NavDropdown.Item
-              onClick={toggleCreateBoard}
-              as={Link}
-              to="/CreateBoard"
+    <AppBar position="static">
+      <Box sx={{ flexGrow: 1 }}>
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Pr.Assistant
+          </Typography>
+          <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1 }}>
+            <Button component={Link} to="/Home" color="inherit">
+              Home
+            </Button>
+            <Button component={Link} to="/Chat" color="inherit">
+              Chat
+            </Button>
+            <Button component={Link} to="/Boards" color="inherit">
+              Board
+            </Button>
+            <Button color="inherit" onClick={toggleCreateBoard}>
+              Create Board
+            </Button>
+          </Box>
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
             >
-              Create board
-            </NavDropdown.Item>
-            <NavDropdown.Item as={Link} to="/Boards">
-              Start with a template
-            </NavDropdown.Item>
-            <NavDropdown.Item href="#/action-3">
-              Create Workspace
-            </NavDropdown.Item>
-          </NavDropdown>
-        </Nav>
-      </Container>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography component={Link} to="/Profile" textAlign="center">
+                  Profile
+                </Typography>
+              </MenuItem>
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography component={Link} to="/Account" textAlign="center">
+                  Account
+                </Typography>
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  handleLogout();
+                  handleCloseUserMenu();
+                }}
+              >
+                <Typography textAlign="center">Logout</Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Box>
       {showCreateBoard && (
         <CreateBoard
           show={showCreateBoard}
           onHide={() => setCreateBoard(false)}
         />
       )}
-    </Navbar>
+    </AppBar>
   );
 }
 
-export default Menu;
+export default ResponsiveAppBar;

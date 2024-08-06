@@ -51,7 +51,6 @@ router.post("/getChatContacts", async (req, res) => {
     }));
     // Send the fetched data back in the response
     res.json(contacts);
-    console.log("aaaaa", data.rows);
   } catch (e) {
     console.error("Error fetching chat contacts:", e);
   }
