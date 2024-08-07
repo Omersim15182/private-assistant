@@ -9,36 +9,18 @@ import { v4 as uuidv4 } from "uuid";
 import "../Board/board.css";
 import Cards from "./Cards";
 
-// Btn board colors
-const PINK = "rgba(255, 192, 203, 0.6)";
-const BLUE = "rgba(0, 0, 255, 0.6)";
-
-// Function to change the state of the board
-function ContextAwareToggle({ eventKey, expanded, onClick }) {
-  const [textBtn, setTextBtn] = useState("Open");
-
-  const handleClick = () => {
-    setTextBtn((prev) => (prev === "Open" ? "Close" : "Open"));
-    onClick();
-  };
-
-  return (
-    <Button
-      variant="contained"
-      style={{ backgroundColor: expanded ? PINK : BLUE }}
-      onClick={handleClick}
-    >
-      {textBtn}
-    </Button>
-  );
-}
-
 export default function Boards() {
   const [boards, setBoards] = useState([{ id: uuidv4(), expanded: false }]);
 
   // Add a new board
   const addBoard = () => {
     setBoards([...boards, { id: uuidv4(), expanded: false }]);
+  };
+
+  //Delete a board
+  const deleteBoard = (id) => {
+    const updateBoards = boards.filter((board) => board.id !== id);
+    setBoards(updateBoards);
   };
 
   const handleChange = (id) => (event, isExpanded) => {
@@ -59,13 +41,6 @@ export default function Boards() {
         >
           <Card>
             <CardHeader
-              action={
-                <ContextAwareToggle
-                  eventKey={board.id}
-                  expanded={board.expanded}
-                  onClick={() => {}}
-                />
-              }
               title={
                 <div className="btn-add">
                   <Button
@@ -78,6 +53,18 @@ export default function Boards() {
                 </div>
               }
             />
+
+            {
+              <div className="btn-add">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => deleteBoard(board.id)}
+                >
+                  Delete board
+                </Button>
+              </div>
+            }
             <AccordionDetails>
               <CardContent>
                 <Cards boardId={board.id} />
