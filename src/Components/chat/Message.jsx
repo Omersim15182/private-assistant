@@ -8,9 +8,10 @@ import {
   CardContent,
   CardActions,
 } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import io from "socket.io-client";
-
+import "../Chat/chat.css";
 const socket = io("http://localhost:3500");
 
 export default function Message({ selectedMember }) {
@@ -148,14 +149,7 @@ export default function Message({ selectedMember }) {
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <Card
-          sx={{
-            height: "29rem",
-            width: "35rem",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
+        <Card className="message">
           <CardContent sx={{ flex: 1 }}>
             <Typography variant="h5">Messages</Typography>
             <Paper
@@ -178,14 +172,15 @@ export default function Message({ selectedMember }) {
               value={newMessageText}
               onChange={handleChange}
               sx={{ marginBottom: 1 }}
-            />
+            ></TextField>
             <Button
               variant="contained"
               color="primary"
               type="submit"
+              endIcon={<SendIcon />}
               onClick={sendMessage}
             >
-              Send
+              send
             </Button>
           </CardActions>
         </Card>

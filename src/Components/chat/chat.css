@@ -1,71 +1,29 @@
-body {
-    background-color: #f0f0f0;
-    margin: 0 auto;
+.chat {
+  display: flex;
+  flex-direction: row;
+  margin: 25px;
+}
 
-  }
-.user-picture{
-    border-radius: 50%;
-    width: 70px;
-    height: 50px;
-  
-  }
-  
-  .chat{
-    display: flex;
-    align-items: center;
-    width: 16rem;
-  
-  }
-  .chat-details{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 5px 5px;
-  }
-  .members{
-    width: 30%;
-    justify-Content : space-evenly;
+.members {
+  margin: 10px;
+  margin-left: 30px;
+  width: 50vh;
+  height: 60vh;
 }
 .members-card{
-      height:29rem;
-      width: 20rem;
-    
+  height: 70vh;
+  overflow-y: auto; /* Vertical scrolling */
+  overflow-x: hidden; /* Disable horizontal scrolling */
+  border: 1px solid rgb(83, 42, 197);
+  padding: 2;
   }
 
-  .friend-chat{
-    display: flex;
-    flex-direction: row-reverse;
-  }
-  .send-button{
-    display: flex;
-    flex-direction: row-reverse;
-  }
+.message {
+  margin: 10px;
+  height: 70vh;
+  width: 35rem;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(83, 42, 197);
 
-  /* Define a custom scrollbar */
-.custom-scrollbar {
-  
-  scrollbar-width: thin; 
- 
-  scrollbar-color: #888 #f1f1f1;
-
-  
-  &::-webkit-scrollbar {
-      width: 10px;
-  }
-  
-  
-  &::-webkit-scrollbar-track {
-      background: #f1f1f1; 
-  }
-  
-  
-  &::-webkit-scrollbar-thumb {
-      background: #888; 
-  }
-  
-  
-  &::-webkit-scrollbar-thumb:hover {
-      background: #555; 
-  }
-  overflow-y: hidden;
 }

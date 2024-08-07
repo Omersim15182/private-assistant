@@ -111,7 +111,7 @@ export default function Members({ onSelectMember }) {
 
   return (
     <div className="members">
-      <Card>
+      <Card className="members-card">
         <CardHeader title="Chat" />
         <CardContent>
           <Button variant="contained" color="primary" onClick={handleShow}>
@@ -184,6 +184,7 @@ export default function Members({ onSelectMember }) {
               <Box
                 key={contact.id}
                 sx={{
+                  border: "2px solid rgb(83, 42, 197)",
                   display: "flex",
                   alignItems: "center",
                   cursor: "pointer",
