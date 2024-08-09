@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { Button, Box, TextField, Paper } from "@mui/material";
 import { v4 as uuidv4 } from "uuid";
+import Button from "@mui/material/Button";
+import DeleteIcon from "@mui/icons-material/Delete";
+import Checkbox from "@mui/material/Checkbox";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 export default function Cards() {
   const [card, setCard] = useState([{ message: "", id: uuidv4() }]);
+
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   // Change the text in card
   const handleText = (e, id) => {
@@ -25,39 +30,31 @@ export default function Cards() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 2,
-        width: 300,
-      }}
-    >
+    <div>
       {card.map(({ message, id }) => (
-        <Paper
-          key={id}
-          sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}
-        >
-          <TextField
-            placeholder="Enter card"
-            variant="outlined"
-            fullWidth
-            value={message}
-            onChange={(e) => handleText(e, id)}
-          />
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => deleteCard(id)}
-          >
-            Delete Card
-          </Button>
-        </Paper>
+        <div className="card" key={id}>
+          <div className="main_card">
+            <Checkbox {...label} />
+            <input
+              className="input-card"
+              placeholder="Enter card"
+              value={message}
+              onChange={(e) => handleText(e, id)}
+            ></input>
+            <div className="card-delete">
+              <div>
+                <ButtonGroup variant="outlined" aria-label="Basic button group">
+                  <Button onClick={() => addCard()}>+</Button>
+                  <Button
+                    startIcon={<DeleteIcon />}
+                    onClick={() => deleteCard(id)}
+                  ></Button>
+                </ButtonGroup>
+              </div>
+            </div>
+          </div>
+        </div>
       ))}
-
-      <Button variant="contained" color="primary" onClick={addCard}>
-        Add Card
-      </Button>
-    </Box>
+    </div>
   );
 }

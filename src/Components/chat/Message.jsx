@@ -66,7 +66,7 @@ export default function Message({ selectedMember }) {
       fetchMessages();
       fetchUserLogin();
     }
-  }, [selectedMember, userAuthor.id]);
+  }, [selectedMember, userAuthor.id, contactMessages]);
 
   // Listen for serverMsg events from the server
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function Message({ selectedMember }) {
     return () => {
       socket.off("serverMsg");
     };
-  }, []);
+  }, [contactMessages]);
 
   // Function to send a new message
   const sendMessage = () => {
@@ -156,7 +156,15 @@ export default function Message({ selectedMember }) {
               sx={{ padding: 2, height: "calc(100% - 80px)", overflow: "auto" }}
             >
               {contactMessages.map((contact, index) => (
-                <Typography key={index} paragraph>
+                <Typography
+                  key={index}
+                  paragraph
+                  className={
+                    contact.from_id === userAuthor.id
+                      ? "message-from-me"
+                      : "message-from-others"
+                  }
+                >
                   {contact.message}
                 </Typography>
               ))}
@@ -185,6 +193,9 @@ export default function Message({ selectedMember }) {
           </CardActions>
         </Card>
       </form>
+      <div>
+        <video></video>
+      </div>
     </div>
   );
 }

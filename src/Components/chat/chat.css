@@ -27,3 +27,18 @@
   border: 1px solid rgb(83, 42, 197);
 
 }
+.message-from-me {
+  text-align: right;
+  background-color: #3fbaca; /* Light blue for user messages */
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.message-from-others {
+  text-align: left;
+  background-color: #f1f8e9; /* Light green for others' messages */
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
