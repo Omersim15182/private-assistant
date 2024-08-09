@@ -28,8 +28,11 @@ export default function Boards() {
             <div className="board-title">
               Board
               <ButtonGroup variant="outlined" aria-label="Basic button group">
-                <Button onClick={addBoard}>+</Button>
+                <Button sx={{ border: "none" }} onClick={addBoard}>
+                  +
+                </Button>
                 <Button
+                  sx={{ border: "none" }}
                   onClick={() => deleteBoard(board.id)}
                   startIcon={<DeleteIcon />}
                 ></Button>

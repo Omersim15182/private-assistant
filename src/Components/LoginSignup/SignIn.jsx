@@ -3,7 +3,7 @@ import Login from "./Login";
 import Signup from "./Signup";
 import Button from "@mui/material/Button";
 
-export default function Home() {
+export default function SignIn() {
   const [displayLogin, setDisplayLogin] = useState(true);
 
   const showLogin = () => {

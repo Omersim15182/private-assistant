@@ -12,11 +12,13 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuIcon from "@mui/icons-material/Menu";
 import CreateBoard from "../Pages/CreateBoard";
-import logoutUser from "./InfoAccount/Logout";
+import { useAuth } from "./LoginSignup/AuthContext";
 
 function ResponsiveAppBar() {
+  const { isAuthenticated, user, logout } = useAuth();
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [showCreateBoard, setCreateBoard] = React.useState(false);
+  console.log("isauth " + isAuthenticated);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -32,8 +34,8 @@ function ResponsiveAppBar() {
 
   const handleLogout = async () => {
     try {
-      const response = await logoutUser();
-      alert(response); // Show the message in an alert
+      await logout(); // Call the logout function from context
+      alert("Logged out successfully"); // Show a message in an alert
     } catch (error) {
       alert(error.message); // Show the error message in an alert
     }
@@ -57,60 +59,83 @@ function ResponsiveAppBar() {
             Pr.Assistant
           </Typography>
           <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1 }}>
-            <Button component={Link} to="/Home" color="inherit">
+            <Button component={Link} to="/sign-in" color="inherit">
               Home
             </Button>
-            <Button component={Link} to="/Chat" color="inherit">
-              Chat
-            </Button>
-            <Button component={Link} to="/Boards" color="inherit">
-              Board
-            </Button>
-            <Button color="inherit" onClick={toggleCreateBoard}>
-              Create Board
-            </Button>
+            {isAuthenticated && (
+              <>
+                <Button component={Link} to="/Chat" color="inherit">
+                  Chat
+                </Button>
+                <Button component={Link} to="/Boards" color="inherit">
+                  Board
+                </Button>
+                <Button color="inherit" onClick={toggleCreateBoard}>
+                  Create Board
+                </Button>
+              </>
+            )}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography component={Link} to="/Profile" textAlign="center">
-                  Profile
-                </Typography>
-              </MenuItem>
-              <MenuItem onClick={handleCloseUserMenu}>
-                <Typography component={Link} to="/Account" textAlign="center">
-                  Account
-                </Typography>
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  handleLogout();
-                  handleCloseUserMenu();
-                }}
-              >
-                <Typography textAlign="center">Logout</Typography>
-              </MenuItem>
-            </Menu>
+            {isAuthenticated ? (
+              <>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar
+                      alt="User Avatar"
+                      src={user?.avatar || "/static/images/avatar/2.jpg"}
+                    />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      component={Link}
+                      to="/Profile"
+                      textAlign="center"
+                    >
+                      Profile
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      component={Link}
+                      to="/Account"
+                      textAlign="center"
+                    >
+                      Account
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleLogout();
+                      handleCloseUserMenu();
+                    }}
+                  >
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <Button component={Link} to="/login" color="inherit">
+                Login
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </Box>

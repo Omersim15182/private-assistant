@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -15,14 +15,14 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useHistory } from "react-router-dom";
-
+import { useAuth } from "./AuthContext";
 const defaultTheme = createTheme();
 
 export default function Login() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const history = useHistory();
+  const navigate = useNavigate();
+  const { login } = useAuth(); // Get login function from context
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -38,10 +38,7 @@ export default function Login() {
     try {
       const response = await axios.post(
         "http://localhost:3500/home/login",
-        {
-          name,
-          password,
-        },
+        { name, password },
         { withCredentials: true }
       );
 
@@ -58,8 +55,9 @@ export default function Login() {
         sameSite: "None",
       });
 
+      login(userData); // Update context with user data
       setPassword("");
-      history.push("../chat/Chat");
+      navigate("/Chat");
     } catch (error) {
       console.error("Failed to login. Please try again:", error.response);
       setName("");

@@ -66,7 +66,7 @@ export default function Message({ selectedMember }) {
       fetchMessages();
       fetchUserLogin();
     }
-  }, [selectedMember, userAuthor.id, contactMessages]);
+  }, [selectedMember, userAuthor.id]);
 
   // Listen for serverMsg events from the server
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function Message({ selectedMember }) {
       console.error("Error sending message:", err);
     }
   };
-
+  console.log("select", selectedMember.id);
   console.log("admin", userAuthor);
 
   return (
