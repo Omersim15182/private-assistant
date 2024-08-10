@@ -51,7 +51,7 @@ export default function Members({ onSelectMember }) {
 
       try {
         const response = await axios.get(
-          "http://localhost:3500/home/userlogin",
+          "http://localhost:3500/landingPage/userlogin",
           { withCredentials: true }
         );
         setAdmin({ id: response.data.id });

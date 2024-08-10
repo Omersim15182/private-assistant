@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -7,23 +7,15 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 
 export default function Cards() {
   const [card, setCard] = useState([{ message: "", id: uuidv4() }]);
-  const widthRefs = useRef({}); // To store references to the widthMachine spans
 
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
-  // Change the text in card and adjust the input width
+  // Change the text in card
   const handleText = (e, id) => {
     const updatedCards = card.map((card) =>
       card.id === id ? { ...card, message: e.target.value } : card
     );
     setCard(updatedCards);
-
-    // Update the width of the input based on the span width
-    const span = widthRefs.current[id];
-    if (span) {
-      span.textContent = e.target.value;
-      e.target.style.width = `${span.offsetWidth + 5}px`; // +5 for padding/border
-    }
   };
 
   // Add card
@@ -43,19 +35,12 @@ export default function Cards() {
         <div className="card" key={id}>
           <div className="main_card">
             <Checkbox {...label} />
-            <span
-              className="width-machine"
-              ref={(el) => (widthRefs.current[id] = el)}
-            >
-              {message}
-            </span>
             <input
               className="input-card"
               placeholder="Enter card"
               value={message}
               onChange={(e) => handleText(e, id)}
-              style={{ width: "auto" }}
-            />
+            ></input>
             <div className="card-delete">
               <div>
                 <ButtonGroup variant="outlined" aria-label="Basic button group">

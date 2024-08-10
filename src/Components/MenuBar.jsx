@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -14,10 +14,10 @@ import MenuIcon from "@mui/icons-material/Menu";
 import CreateBoard from "../Pages/CreateBoard";
 import { useAuth } from "./LoginSignup/AuthContext";
 
-function ResponsiveAppBar() {
+export default function MenuBar() {
   const { isAuthenticated, user, logout } = useAuth();
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const [showCreateBoard, setCreateBoard] = React.useState(false);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [showCreateBoard, setCreateBoard] = useState(false);
   console.log("isauth " + isAuthenticated);
 
   const handleOpenUserMenu = (event) => {
@@ -34,12 +34,14 @@ function ResponsiveAppBar() {
 
   const handleLogout = async () => {
     try {
-      await logout(); // Call the logout function from context
-      alert("Logged out successfully"); // Show a message in an alert
+      await logout();
+      alert("Logged out successfully");
     } catch (error) {
-      alert(error.message); // Show the error message in an alert
+      alert(error.message);
     }
   };
+
+  console.log("status", isAuthenticated);
 
   return (
     <AppBar position="static">
@@ -59,9 +61,11 @@ function ResponsiveAppBar() {
             Pr.Assistant
           </Typography>
           <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1 }}>
-            <Button component={Link} to="/sign-in" color="inherit">
-              Home
-            </Button>
+            {isAuthenticated && (
+              <Button component={Link} to="/Login" color="inherit">
+                Home
+              </Button>
+            )}
             {isAuthenticated && (
               <>
                 <Button component={Link} to="/Chat" color="inherit">
@@ -77,7 +81,7 @@ function ResponsiveAppBar() {
             )}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            {isAuthenticated ? (
+            {isAuthenticated && (
               <>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -131,10 +135,6 @@ function ResponsiveAppBar() {
                   </MenuItem>
                 </Menu>
               </>
-            ) : (
-              <Button component={Link} to="/login" color="inherit">
-                Login
-              </Button>
             )}
           </Box>
         </Toolbar>
@@ -148,5 +148,3 @@ function ResponsiveAppBar() {
     </AppBar>
   );
 }
-
-export default ResponsiveAppBar;

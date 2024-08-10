@@ -1,11 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
+import logoutUser from "../InfoAccount/Logout";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({
   isAuthenticated: false,
   user: null,
-  login: () => {},
-  logout: () => {},
 });
 
 export const AuthProvider = ({ children }) => {
@@ -13,11 +13,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
   const checkAuth = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3500/home/userlogin",
-        { withCredentials: true } // Ensure cookies are sent with the request
+        "http://localhost:3500/landingPage/userlogin",
+        {
+          withCredentials: true,
+        }
       );
 
       if (response.status === 200) {
@@ -35,6 +39,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     checkAuth();
   }, []);
@@ -42,14 +47,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await axios.post(
-        "http://localhost:3500/home/login",
-        credentials
+        "http://localhost:3500/landingPage/login",
+        credentials,
+        {
+          withCredentials: true,
+        }
       );
-      const { token, user } = response.data;
-
-      // Store token in localStorage
-      localStorage.setItem("authToken", token);
-
+      const { user } = response.data;
       setIsAuthenticated(true);
       setUser(user);
     } catch (error) {
@@ -59,10 +63,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    // Remove token from localStorage
-    localStorage.removeItem("authToken");
     setIsAuthenticated(false);
     setUser(null);
+    logoutUser();
+    navigate("/Login");
   };
 
   return (

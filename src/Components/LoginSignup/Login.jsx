@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
+import Link from "@mui/material/Link"; // Keep this import for MUI Link
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -16,13 +16,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAuth } from "./AuthContext";
+
 const defaultTheme = createTheme();
 
 export default function Login() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth(); // Get login function from context
+  const { login } = useAuth();
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -37,7 +38,7 @@ export default function Login() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3500/home/login",
+        "http://localhost:3500/landingPage/login",
         { name, password },
         { withCredentials: true }
       );
@@ -54,8 +55,7 @@ export default function Login() {
         secure: true,
         sameSite: "None",
       });
-
-      login(userData); // Update context with user data
+      await login({ name, password });
       setPassword("");
       navigate("/Chat");
     } catch (error) {
@@ -133,7 +133,7 @@ export default function Login() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link component={RouterLink} to="/Signup" variant="body2">
+                <Link component={RouterLink} to="/SignUp" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

@@ -49,14 +49,14 @@ export default function Message({ selectedMember }) {
     const fetchUserLogin = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3500/home/userlogin",
+          "http://localhost:3500/landingPage/userlogin",
           {
             withCredentials: true,
           }
         );
 
         setUserAuthor(response.data);
-        console.log("Fetched user login:", response.data);
+        console.log("Fetched user login:", response);
       } catch (error) {
         console.error("Error fetching user login:", error);
       }

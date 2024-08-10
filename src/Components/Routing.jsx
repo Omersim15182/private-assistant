@@ -1,23 +1,26 @@
 // Routing.js
 
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Menu from "./Menu";
+import { Route, Routes } from "react-router-dom";
+import MenuBar from "../Components/MenuBar";
 import CreateBoard from "../Pages/CreateBoard";
 import Boards from "./Board/Boards";
 import Chat from "./Chat/Chat";
 import Profile from "./InfoAccount/Profile";
 import Account from "./InfoAccount/Account";
 import Logout from "./InfoAccount/Logout";
-import SignIn from "./LoginSignup/SignIn";
+import Login from "./LoginSignup/Login";
+import SignUp from "./LoginSignup/Signup";
 
 function Routing() {
   return (
     <div>
-      <Menu />
+      <MenuBar />
       <Routes>
-        <Route path="/" element={<SignIn />} />
-        <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/" element={<Login />} />
+
+        <Route path="/Login" element={<Login />} />
+        <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Chat" element={<Chat />} />
         <Route path="/CreateBoard" element={<CreateBoard />} />
         <Route path="/Boards" element={<Boards />} />

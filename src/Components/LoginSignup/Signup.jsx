@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -41,11 +42,14 @@ export default function Signup() {
     e.preventDefault();
     clickSignup();
     try {
-      const response = await axios.post("http://localhost:3500/home/signup", {
-        email,
-        name,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:3500/landingPage/signup",
+        {
+          email,
+          name,
+          password,
+        }
+      );
       console.log("Sign-up successful:", response.data);
     } catch (error) {
       console.error("Error signing up:", error);
@@ -133,7 +137,7 @@ export default function Signup() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link component={RouterLink} to="/Login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

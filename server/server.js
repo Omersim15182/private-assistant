@@ -24,12 +24,12 @@ app.use(express.json());
 
 // Routes setup
 const chatRouter = require("./routes/Messages");
-const homeRouter = require("./routes/LoginSignup");
+const landingPageRouter = require("./routes/LoginSignup");
 const contactRouter = require("./routes/Contacts");
 const logoutRouter = require("./routes/Loguot");
 
 app.use("/chat", chatRouter);
-app.use("/home", homeRouter);
+app.use("/landingPage", landingPageRouter);
 app.use("/contacts", contactRouter);
 app.use("/logout", logoutRouter);
 
