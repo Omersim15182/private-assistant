@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom";
 import MenuBar from "../Components/MenuBar";
 import CreateBoard from "../Pages/CreateBoard";
 import Boards from "./Board/Boards";
-import Chat from "./Chat/Chat";
+import Chat from "./chat/Chat";
 import Profile from "./InfoAccount/Profile";
 import Account from "./InfoAccount/Account";
 import Logout from "./InfoAccount/Logout";

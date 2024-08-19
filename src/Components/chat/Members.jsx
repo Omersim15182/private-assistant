@@ -83,7 +83,11 @@ export default function Members({ onSelectMember }) {
           { withCredentials: true }
         );
         setContactChat(
-          response.data.map((contact) => ({ ...contact, contact }))
+          response.data.map((contact) => ({
+            ...contact,
+            contact,
+            picture: pic,
+          }))
         );
       } catch (e) {
         console.error(e);

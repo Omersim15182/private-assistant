@@ -11,7 +11,7 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import io from "socket.io-client";
-import "../Chat/chat.css";
+import "./chat.css";
 const socket = io("http://localhost:3500");
 
 export default function Message({ selectedMember }) {
