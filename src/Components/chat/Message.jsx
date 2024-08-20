@@ -12,75 +12,60 @@ import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import io from "socket.io-client";
 import "./chat.css";
+
+// Initialize Socket.io connection
 const socket = io("http://localhost:3500");
 
-export default function Message({ selectedMember }) {
+export default function Message({ selectedMember, userLogin }) {
+  // State variables
   const [users, setUsers] = useState([
     { messages: [{ name: "", message: "", date: "", id: "" }] },
   ]);
+  const [newMessageText, setNewMessageText] = useState(""); // New message text
+  const [contactMessages, setContactMessages] = useState([]); // Messages with the selected contact
+  const [userAuthor, setUserAuthor] = useState(""); // Logged-in user information
+  const [socketMessage, setSocketMessage] = useState(""); // Message to be sent via Socket.io
 
-  const [newMessageText, setNewMessageText] = useState("");
-  const [contactMessages, setContactMessages] = useState([]);
-  const [userAuthor, setUserAuthor] = useState("");
-  const [socketMessage, setSocketMessage] = useState("");
-
-  // Fetch messages and user login info
+  // Fetch messages and set user author
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         const response = await axios.get(
           `http://localhost:3500/chat/${selectedMember.id}`,
-          {
-            withCredentials: true,
-          }
+          { withCredentials: true }
         );
 
         const messages = response.data;
         const filteredMessages = messages.filter(
           (u) => u.from_id === userAuthor.id || u.to_id === userAuthor.id
         );
-        setContactMessages(filteredMessages);
+        setContactMessages(filteredMessages); // Set filtered messages with the contact
         console.log("Fetched messages with contact:", messages);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     };
 
-    const fetchUserLogin = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3500/landingPage/userlogin",
-          {
-            withCredentials: true,
-          }
-        );
-
-        setUserAuthor(response.data);
-        console.log("Fetched user login:", response);
-      } catch (error) {
-        console.error("Error fetching user login:", error);
-      }
-    };
+    setUserAuthor(userLogin); // Set the logged-in user
 
     if (selectedMember && selectedMember.id) {
-      fetchMessages();
-      fetchUserLogin();
+      fetchMessages(); // Fetch messages only if a member is selected
     }
-  }, [selectedMember, userAuthor.id]);
+  }, [selectedMember, userAuthor.id, userLogin]);
 
-  // Listen for serverMsg events from the server
+  // Listen for server messages via Socket.io
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
+    if (!socket) return;
+
     socket.on("serverMsg", (msg) => {
       console.log("Received message from server:", msg);
       setContactMessages((prevMessages) => [...prevMessages, { message: msg }]);
     });
+
     return () => {
-      socket.off("serverMsg");
+      socket.off("serverMsg"); // Clean up the event listener on unmount
     };
-  }, [contactMessages]);
+  }, []);
 
   // Function to send a new message
   const sendMessage = () => {
@@ -98,15 +83,15 @@ export default function Message({ selectedMember }) {
 
     setUsers(updatedUsers);
     setSocketMessage(newMessageText);
-    setNewMessageText("");
+    setNewMessageText(""); // Clear the message input
   };
 
-  // Function to handle input change
+  // Handle input change
   const handleChange = (event) => {
     setNewMessageText(event.target.value);
   };
 
-  // Function to handle form submission
+  // Handle form submission for sending a message
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -126,32 +111,32 @@ export default function Message({ selectedMember }) {
       await axios.post(
         "http://localhost:3500/chat/createMessage",
         updatedUser,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
-      // Emit clientMsg event to server via Socket.io
+      // Emit the message via Socket.io
       console.log("new", socketMessage);
       socket.emit("clientMsg", socketMessage);
 
-      // Update local state to reflect sent message
+      // Update local state
       setNewMessageText("");
-
       console.log("Message sent successfully");
     } catch (err) {
       console.error("Error sending message:", err);
     }
   };
-  console.log("select", selectedMember.id);
-  console.log("admin", userAuthor);
+
+  console.log("Selected Member:", selectedMember.id);
+  console.log("Logged-in User:", userAuthor);
 
   return (
     <div>
+      {/* Form for sending messages */}
       <form onSubmit={handleSubmit}>
         <Card className="message">
           <CardContent sx={{ flex: 1 }}>
             <Typography variant="h5">Messages</Typography>
+            {/* Displaying messages */}
             <Paper
               sx={{ padding: 2, height: "calc(100% - 80px)", overflow: "auto" }}
             >
@@ -171,6 +156,7 @@ export default function Message({ selectedMember }) {
             </Paper>
           </CardContent>
           <CardActions>
+            {/* Input field for typing messages */}
             <TextField
               variant="outlined"
               multiline
@@ -180,7 +166,8 @@ export default function Message({ selectedMember }) {
               value={newMessageText}
               onChange={handleChange}
               sx={{ marginBottom: 1 }}
-            ></TextField>
+            />
+            {/* Button to send messages */}
             <Button
               variant="contained"
               color="primary"
@@ -188,7 +175,7 @@ export default function Message({ selectedMember }) {
               endIcon={<SendIcon />}
               onClick={sendMessage}
             >
-              send
+              Send
             </Button>
           </CardActions>
         </Card>

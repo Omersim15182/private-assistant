@@ -1,18 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Members from "./Members";
 import Message from "./Message";
+import axios from "axios";
+import pic from "../../photos/istockphoto-1437816897-1024x1024.jpg";
 
 export default function Chat() {
   const [selectedMember, setSelectedMember] = useState("");
+  const [userLogin, setUserLogin] = useState("");
+  const [users, setUsers] = useState([]);
+
+  //select member to chat with them
   const handleSelectMember = (member) => {
     setSelectedMember(member);
   };
 
+  //Fetch data of user who login
+  useEffect(() => {
+    const fetchUserLogin = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3500/landingPage/userlogin",
+          {
+            withCredentials: true,
+          }
+        );
+
+        setUserLogin(response.data);
+        console.log("Fetched user login:", response);
+      } catch (error) {
+        console.error("Error fetching user login:", error);
+      }
+    };
+
+    fetchUserLogin();
+  }, []);
+
+  //get all contacts
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get(
+          "http://localhost:3500/chat/messages/retrieveContacts",
+          { withCredentials: true }
+        );
+        setUsers(
+          response.data.map((contact) => ({ ...contact, picture: pic }))
+        );
+      } catch (error) {
+        console.error("Error fetching contacts: ", error);
+      }
+    }
+    fetchData();
+  }, []);
+
+  //debug
+  console.log("chatUserLogin", userLogin);
+  console.log("all users", users);
+
   return (
     <div>
       <div className="chat">
-        <Members onSelectMember={handleSelectMember}></Members>
-        <Message selectedMember={selectedMember}></Message>
+        <Members
+          allUsers={users}
+          userLogin={userLogin}
+          onSelectMember={handleSelectMember}
+        />
+        <Message
+          selectedMember={selectedMember}
+          userLogin={userLogin}
+        ></Message>
       </div>
     </div>
   );

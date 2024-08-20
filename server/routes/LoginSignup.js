@@ -72,7 +72,8 @@ router.post("/signup", async (req, res) => {
 router.get("/userlogin", async (req, res) => {
   const token = req.cookies.token;
 
-  if (!token) return; // There is no token.
+  if (!token); // There is no token.
+  console.error("Error in the login");
 
   let verifiedUser;
 

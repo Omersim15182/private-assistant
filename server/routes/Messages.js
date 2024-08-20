@@ -56,7 +56,7 @@ router.get("/:userId", async (req, res) => {
 });
 
 //Get request to retrieve contacts from db
-router.get("/messages/retrieveContact", async (req, res) => {
+router.get("/messages/retrieveContacts", async (req, res) => {
   try {
     const data = await db.query("SELECT DISTINCT id, name FROM users");
 

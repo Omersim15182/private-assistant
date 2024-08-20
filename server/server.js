@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { createSocket } = require("./sockets/appSocket");
+const { ExpressPeerServer } = require("peer");
+
 require("dotenv").config();
 
 // Socket.io dependencies
@@ -30,7 +32,7 @@ const logoutRouter = require("./routes/Loguot");
 
 app.use("/chat", chatRouter);
 app.use("/landingPage", landingPageRouter);
-app.use("/contacts", contactRouter);
+-app.use("/contacts", contactRouter);
 app.use("/logout", logoutRouter);
 
 // Create an HTTP server using Express app

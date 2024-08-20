@@ -14,16 +14,26 @@ import { Close as CloseIcon } from "@mui/icons-material";
 import axios from "axios";
 import "./chat.css";
 
-export default function Members({ onSelectMember }) {
-  const [users, setUsers] = useState([]);
-  const [contactChat, setContactChat] = useState([]);
-  const [admin, setAdmin] = useState({ id: "" });
-  const [contacts, setContacts] = useState([]);
-  const [show, setShow] = useState(false);
+export default function Members({ onSelectMember, allUsers, userLogin }) {
+  // State variables
+  const [users, setUsers] = useState([]); // All users with profile pictures
+  const [contactChat, setContactChat] = useState([]); // Contacts currently in chat
+  const [admin, setAdmin] = useState({ id: "" }); // Admin (current user) information
+  const [contacts, setContacts] = useState([]); // Contacts available to chat
+  const [show, setShow] = useState(false); // Modal visibility state
 
+  // Handles closing the modal
   const handleClose = () => setShow(false);
+
+  // Handles opening the modal
   const handleShow = () => setShow(true);
 
+  // Handles selecting a member (contact) for chat
+  const handleSelectMember = (user) => {
+    onSelectMember(user);
+  };
+
+  // Adds a selected contact to the chat and removes them from the available contacts list
   const chooseContactChat = (contact) => {
     setContactChat((prevContact) => [...prevContact, contact]);
     setContacts((prevContacts) =>
@@ -31,49 +41,27 @@ export default function Members({ onSelectMember }) {
     );
   };
 
-  const handleSelectMember = (user) => {
-    onSelectMember(user);
-  };
-
+  // Effect to set initial users and admin info
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await axios.get(
-          "http://localhost:3500/chat/messages/retrieveContact",
-          { withCredentials: true }
-        );
-        setUsers(
-          response.data.map((contact) => ({ ...contact, picture: pic }))
-        );
-      } catch (error) {
-        console.error("Error fetching contacts: ", error);
-      }
-
-      try {
-        const response = await axios.get(
-          "http://localhost:3500/landingPage/userlogin",
-          { withCredentials: true }
-        );
-        setAdmin({ id: response.data.id });
-      } catch (error) {
-        console.error("Login error", error);
-      }
+    if (allUsers) {
+      setUsers(allUsers.map((user) => ({ ...user, picture: pic }))); // Adds a default picture to all users
     }
-    fetchData();
-  }, []);
+    setAdmin(userLogin); // Sets the logged-in user as the admin
+  }, [allUsers, userLogin]);
 
+  // Effect to filter out contacts that are already in the chat
   useEffect(() => {
     if (!admin.id) return;
 
-    const filteredContacts = users.filter((user) => {
-      return (
+    const filteredContacts = users.filter(
+      (user) =>
         user.id !== admin.id && !contactChat.some((chat) => chat.id === user.id)
-      );
-    });
+    );
 
-    setContacts(filteredContacts);
+    setContacts(filteredContacts); // Sets the available contacts
   }, [admin.id, users, contactChat]);
 
+  // Effect to fetch chat contacts from the server
   useEffect(() => {
     async function getContactsChat() {
       try {
@@ -82,20 +70,22 @@ export default function Members({ onSelectMember }) {
           { userAdminId: admin },
           { withCredentials: true }
         );
+
         setContactChat(
           response.data.map((contact) => ({
             ...contact,
             contact,
-            picture: pic,
+            picture: pic, // Adds a default picture to chat contacts
           }))
         );
       } catch (e) {
-        console.error(e);
+        console.error(e); // Logs any errors
       }
     }
     getContactsChat();
   }, [admin]);
 
+  // Handles adding a new contact to the chat
   const handleSubmit = async (e, user) => {
     e.preventDefault();
 
@@ -112,6 +102,9 @@ export default function Members({ onSelectMember }) {
       console.error("Error adding contact to the list: ", e.response.data);
     }
   };
+
+  // debug - logs users to the console
+  console.log("test", users);
 
   return (
     <div className="members">
@@ -152,6 +145,7 @@ export default function Members({ onSelectMember }) {
                 Contacts
               </Typography>
               <Box mt={2}>
+                {/* List of available contacts */}
                 {contacts.map((user) => (
                   <Box
                     key={user.id}
@@ -166,6 +160,7 @@ export default function Members({ onSelectMember }) {
                       chooseContactChat(user);
                     }}
                   >
+                    {/* Display user picture and name */}
                     <img
                       src={user.picture}
                       alt="Profile"
@@ -184,6 +179,7 @@ export default function Members({ onSelectMember }) {
             </Box>
           </Modal>
           <Box mt={2}>
+            {/* List of contacts already in chat */}
             {contactChat.map((contact) => (
               <Box
                 key={contact.id}
@@ -196,6 +192,7 @@ export default function Members({ onSelectMember }) {
                 }}
                 onClick={() => handleSelectMember(contact)}
               >
+                {/* Display contact  */}
                 <img
                   src={contact.picture}
                   alt="Profile"
