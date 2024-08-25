@@ -1,6 +1,6 @@
-import { Button } from "@mui/material";
 import Peer from "peerjs";
 import React, { useEffect, useRef, useState } from "react";
+import VideocamIcon from "@mui/icons-material/Videocam";
 
 export default function Call({ userLogin, selectedMember }) {
   const [remotePeerId, setRemotePeerId] = useState("");
@@ -42,9 +42,7 @@ export default function Call({ userLogin, selectedMember }) {
     };
   }, [userLogin.id]); // Dependency array includes userLogin.id to recreate Peer if it changes
 
-  const handleCall = async (e) => {
-    e.preventDefault();
-    setRemotePeerId(selectedMember.id);
+  const handleCall = async () => {
     if (remotePeerId) {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -66,20 +64,19 @@ export default function Call({ userLogin, selectedMember }) {
       }
     }
   };
-  console.log(selectedMember.id);
 
+  useEffect(() => {
+    if (selectedMember.id) {
+      setRemotePeerId(selectedMember.id);
+    }
+  }, [selectedMember.id]);
   return (
-    <div>
-      <div className="call-chat">
-        <Button
-          onClick={(e) => handleCall(e)}
-          className="call-button"
-          type="submit"
-        >
-          Call
-        </Button>
-        <video ref={videoRef} className="remote-video" autoPlay></video>
-      </div>
+    <div className="call-chat">
+      <button onClick={handleCall} className="call-button">
+        <VideocamIcon></VideocamIcon>
+      </button>
+
+      <video ref={videoRef} className="remote-video" autoPlay></video>
     </div>
   );
 }
