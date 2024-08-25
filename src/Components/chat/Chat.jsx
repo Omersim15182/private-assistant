@@ -3,6 +3,7 @@ import Members from "./Members";
 import Message from "./Message";
 import axios from "axios";
 import pic from "../../photos/istockphoto-1437816897-1024x1024.jpg";
+import Call from "./Call";
 
 export default function Chat() {
   const [selectedMember, setSelectedMember] = useState("");
@@ -13,27 +14,6 @@ export default function Chat() {
   const handleSelectMember = (member) => {
     setSelectedMember(member);
   };
-
-  //Fetch data of user who login
-  useEffect(() => {
-    const fetchUserLogin = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3500/landingPage/userlogin",
-          {
-            withCredentials: true,
-          }
-        );
-
-        setUserLogin(response.data);
-        console.log("Fetched user login:", response);
-      } catch (error) {
-        console.error("Error fetching user login:", error);
-      }
-    };
-
-    fetchUserLogin();
-  }, []);
 
   //get all contacts
   useEffect(() => {
@@ -53,10 +33,26 @@ export default function Chat() {
     fetchData();
   }, []);
 
-  //debug
-  console.log("chatUserLogin", userLogin);
-  console.log("all users", users);
+  //Fetch data of user who login
+  useEffect(() => {
+    const fetchUserLogin = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3500/landingPage/userlogin",
+          {
+            withCredentials: true,
+          }
+        );
+        setUserLogin(response.data);
+      } catch (error) {
+        console.error("Error fetching user login:", error);
+      }
+    };
 
+    fetchUserLogin();
+  }, []);
+
+  //debug
   return (
     <div>
       <div className="chat">
@@ -64,6 +60,7 @@ export default function Chat() {
           allUsers={users}
           userLogin={userLogin}
           onSelectMember={handleSelectMember}
+          selectedMember={selectedMember}
         />
         <Message
           selectedMember={selectedMember}

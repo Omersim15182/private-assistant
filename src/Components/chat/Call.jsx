@@ -1,73 +1,85 @@
-import React, { useEffect, useState } from "react";
-import io from "socket.io-client";
+import { Button } from "@mui/material";
 import Peer from "peerjs";
+import React, { useEffect, useRef, useState } from "react";
 
-const socket = io("http://localhost:3500"); // Replace with your server URL
-
-export default function Call() {
-  const [peer] = useState(
-    new Peer(undefined, {
-      host: "localhost",
-      port: 3500,
-      path: "/myapp",
-      secure: false,
-    })
-  );
-  const [mediaStream, setMediaStream] = useState(null);
-  const [call, setCall] = useState(null);
+export default function Call({ userLogin, selectedMember }) {
+  const [remotePeerId, setRemotePeerId] = useState("");
+  const videoRef = useRef(null); // Ref for the video element
+  const peerRef = useRef(null); // Ref for the Peer instance
 
   useEffect(() => {
-    // Get user media stream
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setMediaStream(stream);
+    // Initialize Peer with userLogin.id
+    peerRef.current = new Peer(userLogin.id);
 
-        // Handle incoming calls
-        peer.on("call", (incomingCall) => {
-          incomingCall.answer(stream);
-        });
-
-        // Handle signaling through socket.io
-        socket.on("signal", ({ signal, from }) => {
-          peer.signal(signal);
-        });
-      })
-      .catch((err) => console.error("Failed to get media stream", err));
-
-    // Relay signaling data through socket.io
-    peer.on("signal", (data) => {
-      socket.emit("signal", {
-        signal: data,
-        to: "ff3600ad-6e38-485a-9fcf-fee25077a0b9", // Replace with the ID of the peer you want to connect to
-      });
+    peerRef.current.on("open", (id) => {
+      console.log("My peer ID is: " + id);
     });
-  }, [peer]);
 
-  const startCall = () => {
-    if (mediaStream) {
-      const call = peer.call(
-        "ff3600ad-6e38-485a-9fcf-fee25077a0b9",
-        mediaStream
-      );
-      setCall(call);
-    } else {
-      console.error("No media stream available");
+    peerRef.current.on("call", async (call) => {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+        // Answer the call with the local media stream
+        call.answer(mediaStream);
+
+        call.on("stream", (remoteStream) => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = remoteStream;
+            videoRef.current.play();
+          }
+        });
+      } catch (error) {
+        console.error("Failed to get local stream", error);
+      }
+    });
+
+    return () => {
+      if (peerRef.current) {
+        peerRef.current.destroy();
+      }
+    };
+  }, [userLogin.id]); // Dependency array includes userLogin.id to recreate Peer if it changes
+
+  const handleCall = async (e) => {
+    e.preventDefault();
+    setRemotePeerId(selectedMember.id);
+    if (remotePeerId) {
+      try {
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+
+        if (peerRef.current) {
+          const call = peerRef.current.call(remotePeerId, mediaStream);
+          call.on("stream", (remoteStream) => {
+            if (videoRef.current) {
+              videoRef.current.srcObject = remoteStream;
+              videoRef.current.play();
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Failed to get local stream", error);
+      }
     }
   };
-
-  const answerCall = () => {
-    if (call && mediaStream) {
-      call.answer(mediaStream);
-    } else {
-      console.error("No call to answer or media stream is missing");
-    }
-  };
+  console.log(selectedMember.id);
 
   return (
     <div>
-      <button onClick={startCall}>Call</button>
-      <button onClick={answerCall}>Answer</button>
+      <div className="call-chat">
+        <Button
+          onClick={(e) => handleCall(e)}
+          className="call-button"
+          type="submit"
+        >
+          Call
+        </Button>
+        <video ref={videoRef} className="remote-video" autoPlay></video>
+      </div>
     </div>
   );
 }
