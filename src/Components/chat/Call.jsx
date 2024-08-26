@@ -1,82 +1,92 @@
-import Peer from "peerjs";
-import React, { useEffect, useRef, useState } from "react";
-import VideocamIcon from "@mui/icons-material/Videocam";
+import React, { useEffect, useRef } from "react";
+import { Peer } from "peerjs";
+import "./chat.css";
+import { Button } from "@mui/material";
 
 export default function Call({ userLogin, selectedMember }) {
-  const [remotePeerId, setRemotePeerId] = useState("");
-  const videoRef = useRef(null); // Ref for the video element
-  const peerRef = useRef(null); // Ref for the Peer instance
+  const remoteVideoRef = useRef(null);
+  const currentUserVideoRef = useRef(null);
+  const peerInstance = useRef(null);
 
   useEffect(() => {
-    // Initialize Peer with userLogin.id
-    peerRef.current = new Peer(userLogin.id);
+    peerInstance.current = new Peer(userLogin.id);
 
-    peerRef.current.on("open", (id) => {
-      console.log("My peer ID is: " + id);
+    const peer = peerInstance.current;
+
+    peer.on("open", () => {
+      console.log("Peer connection opened");
     });
 
-    peerRef.current.on("call", async (call) => {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-        // Answer the call with the local media stream
-        call.answer(mediaStream);
+    peer.on("call", (call) => {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          call.answer(stream);
 
-        call.on("stream", (remoteStream) => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = remoteStream;
-            videoRef.current.play();
-          }
+          call.on("stream", (remoteStream) => {
+            if (remoteVideoRef.current) {
+              remoteVideoRef.current.srcObject = remoteStream;
+              remoteVideoRef.current
+                .play()
+                .catch((err) =>
+                  console.error("Failed to play remote video", err)
+                );
+            }
+          });
+        })
+        .catch((err) => {
+          console.error("Failed to get local stream", err);
         });
-      } catch (error) {
-        console.error("Failed to get local stream", error);
-      }
+    });
+
+    peer.on("error", (err) => {
+      console.error("Peer connection error", err);
     });
 
     return () => {
-      if (peerRef.current) {
-        peerRef.current.destroy();
+      if (peerInstance.current) {
+        peerInstance.current.destroy();
       }
     };
-  }, [userLogin.id]); // Dependency array includes userLogin.id to recreate Peer if it changes
+  }, [userLogin.id]);
 
-  const handleCall = async () => {
-    if (remotePeerId) {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
-          audio: true,
-        });
-
-        if (peerRef.current) {
-          const call = peerRef.current.call(remotePeerId, mediaStream);
-          call.on("stream", (remoteStream) => {
-            if (videoRef.current) {
-              videoRef.current.srcObject = remoteStream;
-              videoRef.current.play();
-            }
-          });
+  const handleCall = () => {
+    navigator.mediaDevices
+      .getUserMedia({ audio: true, video: true })
+      .then((stream) => {
+        if (currentUserVideoRef.current) {
+          currentUserVideoRef.current.srcObject = stream;
+          currentUserVideoRef.current.play();
         }
-      } catch (error) {
-        console.error("Failed to get local stream", error);
-      }
-    }
+
+        const call = peerInstance.current.call(selectedMember.id, stream);
+
+        call.on("stream", (remoteStream) => {
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = remoteStream;
+            remoteVideoRef.current
+              .play()
+              .catch((err) => console.error("error", err));
+          }
+        });
+      })
+      .catch((err) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.pause();
+        }
+        console.error("Failed to get local stream", err);
+      });
   };
 
-  useEffect(() => {
-    if (selectedMember.id) {
-      setRemotePeerId(selectedMember.id);
-    }
-  }, [selectedMember.id]);
   return (
-    <div className="call-chat">
-      <button onClick={handleCall} className="call-button">
-        <VideocamIcon></VideocamIcon>
-      </button>
-
-      <video ref={videoRef} className="remote-video" autoPlay></video>
+    <div>
+      <Button onClick={handleCall}>Call</Button>
+      <div>
+        <video ref={remoteVideoRef} autoPlay playsInline />
+      </div>
+      <div>
+        <video ref={currentUserVideoRef} autoPlay playsInline />
+      </div>
     </div>
   );
 }

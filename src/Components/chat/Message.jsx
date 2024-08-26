@@ -12,6 +12,7 @@ import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import io from "socket.io-client";
 import "./chat.css";
+import Call from "./Call";
 
 // Initialize Socket.io connection
 const socket = io("http://localhost:3500");
@@ -39,17 +40,17 @@ export default function Message({ selectedMember, userLogin }) {
         const filteredMessages = messages.filter(
           (u) => u.from_id === userAuthor.id || u.to_id === userAuthor.id
         );
-        setContactMessages(filteredMessages); // Set filtered messages with the contact
+        setContactMessages(filteredMessages);
         console.log("Fetched messages with contact:", messages);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
     };
 
-    setUserAuthor(userLogin); // Set the logged-in user
+    setUserAuthor(userLogin);
 
     if (selectedMember && selectedMember.id) {
-      fetchMessages(); // Fetch messages only if a member is selected
+      fetchMessages();
     }
   }, [selectedMember, userAuthor.id, userLogin]);
 
@@ -115,7 +116,6 @@ export default function Message({ selectedMember, userLogin }) {
       );
 
       // Emit the message via Socket.io
-      console.log("new", socketMessage);
       socket.emit("clientMsg", socketMessage);
 
       // Update local state
@@ -131,12 +131,16 @@ export default function Message({ selectedMember, userLogin }) {
 
   return (
     <div>
-      {/* Form for sending messages */}
       <form onSubmit={handleSubmit}>
         <Card className="message">
           <CardContent sx={{ flex: 1 }}>
-            <Typography variant="h5">Messages</Typography>
-            {/* Displaying messages */}
+            <div className="call-chat">
+              <Typography variant="h5">Messages</Typography>
+              <Call
+                selectedMember={selectedMember}
+                userLogin={userLogin}
+              ></Call>
+            </div>
             <Paper
               sx={{ padding: 2, height: "calc(100% - 80px)", overflow: "auto" }}
             >
@@ -156,7 +160,6 @@ export default function Message({ selectedMember, userLogin }) {
             </Paper>
           </CardContent>
           <CardActions>
-            {/* Input field for typing messages */}
             <TextField
               variant="outlined"
               multiline
@@ -167,7 +170,6 @@ export default function Message({ selectedMember, userLogin }) {
               onChange={handleChange}
               sx={{ marginBottom: 1 }}
             />
-            {/* Button to send messages */}
             <Button
               variant="contained"
               color="primary"
