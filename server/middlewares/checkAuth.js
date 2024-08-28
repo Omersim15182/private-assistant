@@ -1,12 +1,10 @@
 const jwt = require("jsonwebtoken");
 
 const checkAuth = (req, res, next) => {
-  console.log(req.headers);
+  // console.log(req.headers);
 
   try {
     const token = req.cookies.token;
-
-    console.log("test", req.headers);
 
     if (!token) {
       return res
@@ -15,8 +13,6 @@ const checkAuth = (req, res, next) => {
     }
 
     jwt.verify(token, process.env.TOKEN_SECRET);
-
-    console.log("Token verified successfully");
 
     next();
   } catch (error) {

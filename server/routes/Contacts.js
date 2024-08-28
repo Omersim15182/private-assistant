@@ -35,7 +35,7 @@ router.post("/chatContacts", async (req, res) => {
 
 router.post("/getChatContacts", async (req, res) => {
   const { userAdminId } = req.body;
-  console.log("user", userAdminId);
+  // console.log("user", userAdminId);
 
   try {
     // Query to fetch chat contacts where userAdmin matches
@@ -49,6 +49,7 @@ router.post("/getChatContacts", async (req, res) => {
       picture: row.contactPicture,
       name: row.contactName,
     }));
+
     // Send the fetched data back in the response
     res.json(contacts);
   } catch (e) {

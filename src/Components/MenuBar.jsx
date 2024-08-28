@@ -41,8 +41,6 @@ export default function MenuBar() {
     }
   };
 
-  console.log("status", isAuthenticated);
-
   return (
     <AppBar position="static">
       <Box sx={{ flexGrow: 1 }}>

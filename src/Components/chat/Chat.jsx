@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Members from "./Members";
-import Message from "./Message";
+import Message from "./Components/Message";
 import axios from "axios";
 import pic from "../../photos/istockphoto-1437816897-1024x1024.jpg";
-import Call from "./Call";
+import Members from "./Components/Members";
 
 export default function Chat() {
   const [selectedMember, setSelectedMember] = useState("");

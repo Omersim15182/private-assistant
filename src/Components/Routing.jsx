@@ -18,7 +18,6 @@ function Routing() {
       <MenuBar />
       <Routes>
         <Route path="/" element={<Login />} />
-
         <Route path="/Login" element={<Login />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Chat" element={<Chat />} />

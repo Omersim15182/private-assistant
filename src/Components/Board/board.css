@@ -48,3 +48,6 @@
 .btn-add{
   margin-left: auto;
 }
+.no-drag {
+  pointer-events: auto; /* Ensure interactive elements work */
+}

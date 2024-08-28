@@ -46,8 +46,9 @@ export default function Login() {
       const token = response.data.token;
       const userData = response.data.user;
 
-      console.log("Login successful. Token");
-      console.log("User data:", userData);
+      console.log("Login successful.");
+
+      // Header: Set-Cookie -> Response
 
       Cookies.set("token", token, {
         expires: 1 / 24,

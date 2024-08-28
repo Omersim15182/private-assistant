@@ -41,7 +41,6 @@ router.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
       path: "/",
       maxAge: 3600000,
       httpOnly: true,
@@ -72,8 +71,12 @@ router.post("/signup", async (req, res) => {
 router.get("/userlogin", async (req, res) => {
   const token = req.cookies.token;
 
-  if (!token); // There is no token.
-  console.error("Error in the login");
+  // There is no token.
+  if (!token) {
+    console.error("Error in the login");
+    res.sendStatus(400);
+    return;
+  }
 
   let verifiedUser;
 
