@@ -14,6 +14,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { styled } from "@mui/material/styles";
 
 const defaultTheme = createTheme();
 
@@ -22,39 +24,66 @@ export default function Signup() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState([]);
+  const [photo, setPhoto] = useState("");
 
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handleNameChange = (e) => setName(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handlePhotoChange = (e) => setPhoto(e.target.files[0]);
+
+  const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+  });
 
   const clickSignup = () => {
     if (email === "" || name === "" || password === "") {
       alert("Enter again");
     } else {
-      setUser([...user, { Email: email, Name: name, Password: password }]);
+      setUser([
+        ...user,
+        { Email: email, Name: name, Password: password, Photo: photo },
+      ]);
       setEmail("");
       setName("");
       setPassword("");
+      setPhoto("");
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     clickSignup();
+
+    const formData = new FormData();
+    formData.append("image", photo); // The field name here must match "image" in the backend
+    formData.append("email", email); // Add email to formData
+    formData.append("name", name); // Add name to formData
+    formData.append("password", password); // Add password to formData
+
     try {
       const response = await axios.post(
         "http://localhost:3500/landingPage/signup",
+        formData,
         {
-          email,
-          name,
-          password,
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
+
       console.log("Sign-up successful:", response.data);
     } catch (error) {
       console.error("Error signing up:", error);
     }
   };
+
+  console.log("photo", photo);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -117,6 +146,24 @@ export default function Signup() {
                   value={password}
                   onChange={handlePasswordChange}
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  component="label"
+                  role={undefined}
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  type="file"
+                  onChange={handlePhotoChange}
+                >
+                  Upload photo
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(event) => console.log(event.target.files)}
+                    multiple
+                  />
+                </Button>
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel

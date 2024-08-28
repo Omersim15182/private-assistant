@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const { v4: uuidv4 } = require("uuid");
+const multer = require("multer");
+const bcrypt = require("bcrypt");
 dotenv.config();
 
 // Function to generate JWT access token
@@ -53,18 +55,24 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/signup", async (req, res) => {
+const upload = multer({ dest: "../Photos/" });
+
+router.post("/signup", upload.single("image"), async (req, res) => {
   const { email, name, password } = req.body;
+  const photo = req.file ? req.file.filename : null;
   const newId = uuidv4();
 
   try {
-    const result = await pool.query(
-      "INSERT INTO users (email , name , password ,id) VALUES ($1,$2,$3,$4)",
-      [email, name, password, newId]
+    // Insert the new user into the database, including the photo filename
+    await pool.query(
+      "INSERT INTO users (email, name, password, photo, id) VALUES ($1, $2, $3, $4, $5)",
+      [email, name, password, photo, newId]
     );
-    res.status(200).json({ Signup: "Sign Up success" });
+
+    res.status(200).json({ message: "Sign Up success" });
   } catch (error) {
-    console.error("Error :", error);
+    console.error("Error during signup:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
