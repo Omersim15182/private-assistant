@@ -20,17 +20,6 @@ import { styled } from "@mui/material/styles";
 const defaultTheme = createTheme();
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState([]);
-  const [photo, setPhoto] = useState("");
-
-  const handleEmailChange = (e) => setEmail(e.target.value);
-  const handleNameChange = (e) => setName(e.target.value);
-  const handlePasswordChange = (e) => setPassword(e.target.value);
-  const handlePhotoChange = (e) => setPhoto(e.target.files[0]);
-
   const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
     clipPath: "inset(50%)",
@@ -42,6 +31,35 @@ export default function Signup() {
     whiteSpace: "nowrap",
     width: 1,
   });
+
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+  const [user, setUser] = useState([]);
+  const [photo, setPhoto] = useState("");
+
+  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handleNameChange = (e) => setName(e.target.value);
+  const handlePasswordChange = (e) => setPassword(e.target.value);
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertToBase64(file);
+    setPhoto(base64);
+  };
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
 
   const clickSignup = () => {
     if (email === "" || name === "" || password === "") {
@@ -62,31 +80,25 @@ export default function Signup() {
     e.preventDefault();
     clickSignup();
 
-    const formData = new FormData();
-    formData.append("image", photo); // The field name here must match "image" in the backend
-    formData.append("email", email); // Add email to formData
-    formData.append("name", name); // Add name to formData
-    formData.append("password", password); // Add password to formData
-
     try {
       const response = await axios.post(
         "http://localhost:3500/landingPage/signup",
-        formData,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          email,
+          name,
+          password,
+          photo,
         }
       );
-
       console.log("Sign-up successful:", response.data);
     } catch (error) {
       console.error("Error signing up:", error);
     }
   };
 
-  console.log("photo", photo);
-
   return (
     <ThemeProvider theme={defaultTheme}>
+      <div>{photo}</div>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -160,7 +172,7 @@ export default function Signup() {
                   Upload photo
                   <VisuallyHiddenInput
                     type="file"
-                    onChange={(event) => console.log(event.target.files)}
+                    onChange={(event) => console.log(event.target.files[0])}
                     multiple
                   />
                 </Button>

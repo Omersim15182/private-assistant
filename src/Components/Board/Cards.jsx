@@ -4,9 +4,6 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Checkbox from "@mui/material/Checkbox";
 import ButtonGroup from "@mui/material/ButtonGroup";
-import { Droppable } from "./Dnd/Droppable";
-import { Draggable } from "./Dnd/Draggable";
-import { DndContext } from "@dnd-kit/core";
 
 export default function Cards() {
   const [card, setCard] = useState([{ message: "", id: uuidv4() }]);
@@ -34,38 +31,29 @@ export default function Cards() {
   };
 
   return (
-    <DndContext>
-      <Droppable id="card">
-        <div>
-          {card.map(({ message, id }) => (
-            <Draggable key={id} id={id}>
-              <div className="card">
-                <div className="main_card">
-                  <Checkbox {...label} />
-                  <input
-                    className="input-card"
-                    placeholder="Enter card"
-                    value={message}
-                    onChange={(e) => handleText(e, id)}
-                  />
-                  <div className="card-delete">
-                    <ButtonGroup
-                      variant="outlined"
-                      aria-label="Basic button group"
-                    >
-                      <Button onClick={addCard}>+</Button>
-                      <Button
-                        startIcon={<DeleteIcon />}
-                        onClick={() => deleteCard(id)}
-                      />
-                    </ButtonGroup>
-                  </div>
-                </div>
-              </div>
-            </Draggable>
-          ))}
+    <div>
+      {card.map(({ message, id }) => (
+        <div className="card">
+          <div className="main_card">
+            <Checkbox {...label} />
+            <input
+              className="input-card"
+              placeholder="Enter card"
+              value={message}
+              onChange={(e) => handleText(e, id)}
+            />
+            <div className="card-delete">
+              <ButtonGroup variant="outlined" aria-label="Basic button group">
+                <Button onClick={addCard}>+</Button>
+                <Button
+                  startIcon={<DeleteIcon />}
+                  onClick={() => deleteCard(id)}
+                />
+              </ButtonGroup>
+            </div>
+          </div>
         </div>
-      </Droppable>
-    </DndContext>
+      ))}
+    </div>
   );
 }

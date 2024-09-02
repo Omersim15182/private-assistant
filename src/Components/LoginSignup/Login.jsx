@@ -22,6 +22,8 @@ const defaultTheme = createTheme();
 export default function Login() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [photo, setPhoto] = useState("");
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -44,7 +46,6 @@ export default function Login() {
       );
 
       const token = response.data.token;
-      const userData = response.data.user;
 
       console.log("Login successful.");
 
@@ -56,6 +57,7 @@ export default function Login() {
         secure: true,
         sameSite: "None",
       });
+
       await login({ name, password });
       setPassword("");
       navigate("/Chat");

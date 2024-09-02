@@ -22,8 +22,8 @@ router.post("/chatContacts", async (req, res) => {
 
     // If contact does not exist, insert it into the database
     await db.query(
-      'INSERT INTO chat_contacts ("userAdmin", "contactId", "contactName" , "contactPicture") VALUES ($1, $2, $3 , $4)',
-      [userAdmin.id, contact.id, contact.name, contact.picture]
+      'INSERT INTO chat_contacts ("userAdmin", "contactId", "contactName" , "contactPhoto") VALUES ($1, $2, $3 , $4)',
+      [userAdmin.id, contact.id, contact.name, contact.photo]
     );
 
     res.status(200).json({ message: "Contact added successfully" });
@@ -46,7 +46,7 @@ router.post("/getChatContacts", async (req, res) => {
 
     const contacts = data.rows.map((row) => ({
       id: row.contactId,
-      picture: row.contactPicture,
+      photo: row.contactPhoto,
       name: row.contactName,
     }));
 

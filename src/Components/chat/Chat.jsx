@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Message from "./Components/Message";
 import axios from "axios";
-import pic from "../../photos/istockphoto-1437816897-1024x1024.jpg";
 import Members from "./Components/Members";
 
 export default function Chat() {
@@ -22,9 +21,7 @@ export default function Chat() {
           "http://localhost:3500/chat/messages/retrieveContacts",
           { withCredentials: true }
         );
-        setUsers(
-          response.data.map((contact) => ({ ...contact, picture: pic }))
-        );
+        setUsers(response.data.map((contact) => ({ ...contact })));
       } catch (error) {
         console.error("Error fetching contacts: ", error);
       }
@@ -50,6 +47,8 @@ export default function Chat() {
 
     fetchUserLogin();
   }, []);
+
+  console.log("usersphoto", users);
 
   //debug
   return (

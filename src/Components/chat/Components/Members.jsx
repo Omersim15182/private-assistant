@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import pic from "../../../photos/istockphoto-1437816897-1024x1024.jpg";
 import {
   Card,
   CardContent,
@@ -13,7 +12,6 @@ import {
 import { Close as CloseIcon } from "@mui/icons-material";
 import axios from "axios";
 import "../chat.css";
-import { useAuth } from "../../LoginSignup/AuthContext";
 
 export default function Members({
   selectedMember,
@@ -21,12 +19,11 @@ export default function Members({
   allUsers,
   userLogin,
 }) {
-  const [users, setUsers] = useState([]); // All users with profile pictures
+  const [users, setUsers] = useState([]); // All users
   const [contactChat, setContactChat] = useState([]); // Contacts currently in chat
   const [admin, setAdmin] = useState({ id: "" }); // Admin (current user) information
   const [contacts, setContacts] = useState([]); // Contacts available to chat
   const [show, setShow] = useState(false); // Modal visibility state
-  const { isAuthenticated } = useAuth();
 
   // Handles closing the modal
   const handleClose = () => setShow(false);
@@ -50,7 +47,7 @@ export default function Members({
   // Effect to set initial users and admin info
   useEffect(() => {
     if (allUsers) {
-      setUsers(allUsers.map((user) => ({ ...user, picture: pic }))); // Adds a default picture to all users
+      setUsers(allUsers.map((user) => ({ ...user })));
     }
 
     setAdmin(userLogin); // Sets the logged-in user as the admin
@@ -88,7 +85,6 @@ export default function Members({
           response.data.map((contact) => ({
             ...contact,
             contact,
-            picture: pic, // Adds a default picture to chat contacts
           }))
         );
       } catch (e) {
@@ -117,6 +113,7 @@ export default function Members({
   };
 
   // debug - logs users to the console
+  console.log("contactschat", contactChat);
 
   return (
     <div className="members">
@@ -172,11 +169,10 @@ export default function Members({
                       chooseContactChat(user);
                     }}
                   >
-                    {/* Display user picture and name */}
                     <img
-                      src={user.picture}
+                      src={user.photo}
                       alt="Profile"
-                      className="user-picture"
+                      className="user-photo"
                       style={{
                         width: 50,
                         height: 50,
@@ -204,9 +200,9 @@ export default function Members({
                 onClick={() => handleSelectMember(contact)}
               >
                 <img
-                  src={contact.picture}
+                  src={contact.photo}
                   alt="Profile"
-                  className="user-picture"
+                  className="user-photo"
                   style={{
                     width: 50,
                     height: 50,

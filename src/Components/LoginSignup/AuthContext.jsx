@@ -35,6 +35,7 @@ export const AuthProvider = ({ children }) => {
       console.error("Authentication check failed:", error);
       setIsAuthenticated(false);
       setUser(null);
+      navigate("/Login");
     } finally {
       setLoading(false);
     }
