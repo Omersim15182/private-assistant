@@ -18,7 +18,7 @@ export default function Chat() {
     async function fetchData() {
       try {
         const response = await axios.get(
-          "http://localhost:3500/chat/messages/retrieveContacts",
+          "http://localhost:3500/Contacts/retrieveContacts",
           { withCredentials: true }
         );
         setUsers(response.data.map((contact) => ({ ...contact })));
@@ -48,7 +48,7 @@ export default function Chat() {
     fetchUserLogin();
   }, []);
 
-  console.log("usersphoto", users);
+  console.log("users", users);
 
   //debug
   return (

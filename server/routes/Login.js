@@ -1,15 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const pool = require("../dbConfig");
+const { getRepository } = require("typeorm");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
+const User = require("../entity/User");
+const Login = require("../entity/Login");
+const dotenv = require("dotenv");
 
 dotenv.config();
-router.use(express.urlencoded({ limit: "25mb", extended: true }));
 
-// Function to generate JWT access token
 function generateAccessToken(user) {
   return jwt.sign({ id: user.id }, process.env.TOKEN_SECRET, {
     expiresIn: "1h",
@@ -21,23 +20,21 @@ router.post("/login", async (req, res) => {
   const { name, password } = req.body;
 
   try {
-    const query = "SELECT * FROM users WHERE name = $1";
-    const result = await pool.query(query, [name]);
+    const userRepository = getRepository(User);
+    const loginRepository = getRepository(Login);
 
-    const user = result.rows[0];
+    const user = await userRepository.findOne({ where: { name } });
 
-    // Check if user exists and password is correct
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
     const currentDate = new Date();
-
-    await pool.query("INSERT INTO login (name, id, date) VALUES ($1, $2, $3)", [
-      user.name,
-      user.id,
-      currentDate,
-    ]);
+    await loginRepository.save({
+      name: user.name,
+      id: user.id,
+      date: currentDate,
+    });
 
     const token = generateAccessToken(user);
 

@@ -1,24 +1,33 @@
+// src/routes/signup.js
 const express = require("express");
 const router = express.Router();
-const pool = require("../dbConfig");
-const { v4: uuidv4 } = require("uuid");
+const { getRepository } = require("typeorm");
 const bcrypt = require("bcrypt");
+const User = require("../entity/User"); // Adjust the path as necessary
 
 router.use(express.urlencoded({ limit: "25mb", extended: true }));
 
 // Signup route
 router.post("/signup", async (req, res) => {
   const { email, name, password, photo } = req.body;
-  const newId = uuidv4();
 
   try {
     // Hash the password before saving it
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.query(
-      "INSERT INTO users (email, name, password, photo, id) VALUES ($1, $2, $3, $4, $5)",
-      [email, name, hashedPassword, photo, newId]
-    );
+    // Get the user repository
+    const userRepository = getRepository(User);
+
+    // Create a new user instance
+    const newUser = userRepository.create({
+      email,
+      name,
+      password: hashedPassword,
+      photo,
+    });
+
+    // Save the new user
+    await userRepository.save(newUser);
 
     res.status(200).json({ message: "Sign Up success" });
   } catch (error) {

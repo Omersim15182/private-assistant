@@ -126,9 +126,6 @@ export default function Message({ selectedMember, userLogin }) {
     }
   };
 
-  console.log("Selected Member:", selectedMember.id);
-  console.log("Logged-in User:", userAuthor);
-
   return (
     <div>
       <form onSubmit={handleSubmit}>

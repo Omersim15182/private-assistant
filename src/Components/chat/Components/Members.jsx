@@ -113,7 +113,11 @@ export default function Members({
   };
 
   // debug - logs users to the console
+  console.log("///////////////");
   console.log("contactschat", contactChat);
+  console.log("contacts", contacts);
+  console.log("users", users);
+  console.log("///////////////");
 
   return (
     <div className="members">

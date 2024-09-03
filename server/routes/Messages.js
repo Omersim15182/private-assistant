@@ -1,71 +1,62 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../dbConfig");
-const { v4: uuidv4 } = require("uuid");
+const { getRepository } = require("typeorm");
+const Message = require("../entity/Message");
 const checkAuth = require("../middlewares/checkAuth");
 
 router.use(checkAuth);
 
-//Get request to create key for each new contact
+// Get request to create key for each new contact
 router.get("/createContactId", (req, res) => {
   const newId = { id: uuidv4() };
   res.json(newId);
 });
 
-//Post request to create a new message
+// Post request to create a new message
 router.post("/createMessage", async (req, res) => {
   try {
     const { messages } = req.body;
-
     const message = messages[0];
 
     console.log("message:", message);
 
-    await db.query(
-      "INSERT INTO messages (from_id, to_id,message, date) VALUES ($1, $2, $3,$4)",
-      [message.from, message.to, message.message, message.date]
-    );
+    const messageRepository = getRepository(Message);
 
-    res.json({ message: "Message created seccessfully" });
+    const newMessage = messageRepository.create({
+      from_id: message.from,
+      to_id: message.to,
+      message: message.message,
+      date: message.date,
+    });
+
+    await messageRepository.insert(newMessage);
+
+    res.json({ message: "Message created successfully" });
   } catch (error) {
     console.error("Error creating message:", error);
     res.sendStatus(500); // statusCodes.INTERNAL_SERVER_ERROR
   }
 });
 
-//Get request to choose the contact's messages order the key
+// Get request to choose the contact's messages order the key
 router.get("/:userId", async (req, res) => {
-  // Add something before the :userId because it takes all the requests there.
-
   try {
     const userId = req.params.userId;
 
-    console.log("userId:", req.params.userId);
+    console.log("userId:", userId);
 
-    const data = await db.query(
-      "SELECT * FROM messages WHERE to_id = $1 OR from_id = $1",
-      [userId]
-    );
+    const messageRepository = getRepository(Message);
 
-    console.log("test for userId:", data.rows);
+    const data = await messageRepository.find({
+      where: [{ to_id: userId }, { from_id: userId }],
+    });
 
-    res.json(data.rows);
+    console.log("test for userId:", data);
+
+    res.json(data);
   } catch (error) {
-    console.error("Error in fetch messages oreder the key: ", error);
-  }
-});
-
-//Get request to retrieve contacts from db
-router.get("/messages/retrieveContacts", async (req, res) => {
-  try {
-    const data = await db.query("SELECT DISTINCT id, name ,photo FROM users");
-
-    console.log("Data retrieved from DB:", data.rows);
-
-    res.json(data.rows);
-  } catch (error) {
-    console.error("Error fetching contacts:", error);
-    res.status(500).json({ error: "An internal server error occurred" }); // sendStatus(StatusCodes.INTERNAL_SERVER_ERROR)
+    console.error("Error in fetch messages order the key:", error);
+    res.sendStatus(500);
   }
 });
 

@@ -169,11 +169,7 @@ export default function Signup() {
                   onChange={handlePhotoChange}
                 >
                   Upload photo
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={(event) => console.log(event.target.files[0])}
-                    multiple
-                  />
+                  <VisuallyHiddenInput type="file" multiple />
                 </Button>
               </Grid>
               <Grid item xs={12}>
