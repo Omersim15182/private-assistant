@@ -7,7 +7,6 @@ const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcrypt");
 
 dotenv.config();
-
 router.use(express.urlencoded({ limit: "25mb", extended: true }));
 
 // Function to generate JWT access token
@@ -52,27 +51,6 @@ router.post("/login", async (req, res) => {
     res.status(200).json({ token, user });
   } catch (error) {
     console.error("Error during login:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-});
-
-// Signup route
-router.post("/signup", async (req, res) => {
-  const { email, name, password, photo } = req.body;
-  const newId = uuidv4();
-
-  try {
-    // Hash the password before saving it
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await pool.query(
-      "INSERT INTO users (email, name, password, photo, id) VALUES ($1, $2, $3, $4, $5)",
-      [email, name, hashedPassword, photo, newId]
-    );
-
-    res.status(200).json({ message: "Sign Up success" });
-  } catch (error) {
-    console.error("Error during signup:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });

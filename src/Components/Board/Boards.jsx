@@ -23,7 +23,7 @@ export default function Boards() {
   return (
     <div style={{ display: "flex", flexDirection: "row" }}>
       {boards.map((board) => (
-        <div className="board">
+        <div key={board.id} className="board">
           <div className="board-title">
             Board
             <ButtonGroup variant="outlined" aria-label="Basic button group">

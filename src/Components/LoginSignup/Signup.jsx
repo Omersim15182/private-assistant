@@ -82,7 +82,7 @@ export default function Signup() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3500/landingPage/signup",
+        "http://localhost:3500/landingPage/signup/signup",
         {
           email,
           name,
@@ -98,7 +98,6 @@ export default function Signup() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <div>{photo}</div>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box

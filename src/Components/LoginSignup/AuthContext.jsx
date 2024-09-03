@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3500/landingPage/userlogin",
+        "http://localhost:3500/landingPage/login/userlogin",
         {
           withCredentials: true,
         }
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await axios.post(
-        "http://localhost:3500/landingPage/login",
+        "http://localhost:3500/landingPage/login/login",
         credentials,
         {
           withCredentials: true,

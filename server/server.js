@@ -24,12 +24,14 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb" }));
 // Routes setup
 const chatRouter = require("./routes/Messages");
-const landingPageRouter = require("./routes/LoginSignup");
+const loginRouter = require("./routes/Login");
+const signupRouter = require("./routes/Signup");
 const contactRouter = require("./routes/Contacts");
 const logoutRouter = require("./routes/Loguot");
 
 app.use("/chat", chatRouter);
-app.use("/landingPage", landingPageRouter);
+app.use("/landingPage/login", loginRouter);
+app.use("/landingPage/signup", signupRouter);
 app.use("/contacts", contactRouter);
 app.use("/logout", logoutRouter);
 

@@ -33,7 +33,7 @@ export default function Cards() {
   return (
     <div>
       {card.map(({ message, id }) => (
-        <div className="card">
+        <div key={id} className="card">
           <div className="main_card">
             <Checkbox {...label} />
             <input

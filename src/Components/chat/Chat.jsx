@@ -34,7 +34,7 @@ export default function Chat() {
     const fetchUserLogin = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3500/landingPage/userlogin",
+          "http://localhost:3500/landingPage/login/userlogin",
           {
             withCredentials: true,
           }
